@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+<style>
+    *{
+        box-sizing: border-box;
+    }
+
+    body{
+        width: 500px;
+    }
+
+    .container{
+        height: 120px;
+        width: 500px;
+        padding:10px;
+        background: url("{{backgroundImage}}");
+        box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.4);
+        background-size: cover;
+        background-position-y: -40px;
+        border-radius: 5px;
+    }
+
+    .user{
+        float: left;
+        height: 100px;
+        width: 100px;
+    }
+
+    .user img{
+        width: 100%;
+        border: 2px solid black;
+        border-radius: 50px;
+    }
+
+    .inner-container{
+        float: left;
+        width: 360px;
+        height: 100%;
+        margin-left: 20px;
+    }
+
+    .top{
+        position: relative;
+        font-family: Calibri,serif;
+        width: 100%;
+        height: 40px;
+    }
+
+    .top .rank{
+        float: left;
+        width: 50%;
+        font-size: 20px;
+        color: beige;
+    }
+
+    .top .rank span{
+        font-size: 32px;
+        color: white;
+    }
+
+    .top .level{
+        float: left;
+        width: 50%;
+        text-align: right;
+        font-size: 20px;
+        color: beige;
+    }
+
+    .top .level span{
+        font-size: 32px;
+        color: white
+    }
+
+    .middle{
+        width: 100%;
+        height: 30px;
+    }
+
+    .middle .name{
+        float: left;
+        max-width: 180px;
+        font-family: Calibri,serif;
+        color: white;
+        font-size: 24px;
+    }
+
+    .middle .id{
+        float: left;
+        margin-left: 8px;
+        color: beige;
+        font-size: 16px;
+        padding-top: 10px;
+    }
+
+    .middle .xp{
+        float: right;
+        padding-top: 10px;
+        font-family: Calibri,serif;
+        color: lightgray;
+        font-size: 16px;
+    }
+
+    .middle .xp span{
+        color: white;
+    }
+
+    .bottom{
+        width: 100%;
+        height: 24px;
+        box-shadow: inset 0 0 0 2000px rgba(0, 0, 0, 0.4);
+        border-radius: 12px;
+        border: 1px solid black;
+    }
+
+    .bottom div{
+        height: 100%;
+        background: linear-gradient(38deg, rgba(137,22,39,1) 0%, rgba(248,21,47,1) 100%);
+        border-radius: 10px;
+    }
+</style>
+<div class="container">
+    <div class="user">
+        <img src="{{avatar}}" />
+    </div>
+    <div class="inner-container">
+        <div class="top">
+            <div class="rank">
+                RANK <span>#100</span>
+            </div>
+            <div class="level">
+                LEVEL <span>17</span>
+            </div>
+        </div>
+        <div class="middle">
+            <div class="name">
+                {{username}}
+            </div>
+            <div class="id">#{{discriminator}}</div>
+            <div class="xp">
+                <span>20</span> / 100 XP
+            </div>
+        </div>
+        <div class="bottom">
+            <div style="width: 25%"></div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

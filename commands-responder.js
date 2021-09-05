@@ -30,6 +30,7 @@ client.on('interactionCreate', async interaction => {
                     username: interaction.user.username,
                     discriminator: interaction.user.discriminator
                 },
+                transparent: true
             })
 
             if (interaction) {

@@ -105,3 +105,6 @@ dist
 
 # Phpstorm
 .idea
+
+# Custom
+.bearer

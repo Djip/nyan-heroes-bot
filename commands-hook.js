@@ -5,7 +5,12 @@ const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 
 const commandsHook = [
-    new SlashCommandBuilder().setName('test').setDescription('Fetch current rank/level information'),
+    new SlashCommandBuilder().setName('test')
+        .setDescription('Fetch current rank/level information'),
+    new SlashCommandBuilder().setName('give-xp')
+        .setDescription('Fetch current rank/level information')
+        .addUserOption(option => option.setName('user').description('The user to give xp'))
+        .addUserOption(option => option.setName('xp').description('How much xp to give')),
 ]
     .map(command => command.toJSON());
 

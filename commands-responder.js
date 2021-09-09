@@ -1,6 +1,6 @@
 require('dotenv').config();
 
-const { Client, Intents } = require('discord.js');
+const { Client, Intents, MessageEmbed, MessageAttachment } = require('discord.js');
 const fs = require("fs");
 const nodeHtmlToImage = require("node-html-to-image");
 const axios = require('./modules/axios')
@@ -10,7 +10,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 
 
 client.on('messageCreate', async message => {
-    console.log(message)
+    // console.log(message)
 })
 
 client.on('interactionCreate', async interaction => {
@@ -19,14 +19,45 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'give-xp') {
+        const api = await axios.api()
+        const user = interaction.options.getUser('user');
+        const xp = interaction.options.getInteger('xp');
 
+        api.post('users/give-xp', {
+            user,
+            xp
+        }).then(response => {
+            if (interaction) {
+                interaction.reply("XP Given")
+            }
+        }).catch(error => {
+            if (interaction) {
+                interaction.reply("Something went wrong")
+            }
+        })
     }
 
     if (interaction.commandName === 'subtract-xp') {
+        const api = await axios.api()
+        const user = interaction.options.getUser('user');
+        const xp = interaction.options.getInteger('xp');
 
+        api.post('users/subtract-xp', {
+            user,
+            xp
+        }).then(response => {
+            if (interaction) {
+                interaction.reply("XP Removed")
+            }
+        }).catch(error => {
+            if (interaction) {
+                interaction.reply("Something went wrong")
+            }
+        })
     }
 
     if (interaction.commandName === 'test') {
+        await interaction.deferReply({ ephemeral: true })
         try {
             const api = await axios.api()
             fs.readFile(__dirname + '/rank-card/index.html', async (err, data) => {
@@ -44,10 +75,9 @@ client.on('interactionCreate', async interaction => {
                         }
                     }).then(response => {
                         rankData = response.data.data
-                    }).catch(error => {
-                        console.log(error);
+                    }).catch(async error => {
                         if (interaction) {
-                            interaction.reply('Error, try again.')
+                            await interaction.editReply('Error, try again.')
                         }
                     })
 
@@ -79,18 +109,29 @@ client.on('interactionCreate', async interaction => {
                         })
 
                         if (interaction) {
-                            interaction.reply({files: [rankCard]})
+                            if (rankCard) {
+                                const image = new MessageAttachment(rankCard, "discordjs")
+                                const embed = new MessageEmbed()
+                                    .setImage("attachment://discordjs.png")
+                                console.log(image)
+                                await interaction.editReply({embeds: [embed], files: [image]})
+                                console.log("test2")
+                            } else {
+                                await interaction.editReply('Error, try again.')
+                                console.log("test44")
+                            }
                         }
                     }
                 } catch (ex) {
+                    console.log(ex)
                     if (interaction) {
-                        interaction.reply('Error, try again.')
+                        await interaction.editReply('Error, try again.')
                     }
                 }
             });
         } catch (ex) {
             if (interaction) {
-                interaction.reply('Error, try again.')
+                await interaction.editReply('Error, try again.')
             }
         }
     }

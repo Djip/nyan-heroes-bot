@@ -2,7 +2,7 @@ require('dotenv').config();
 
 const { REST }  = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
-const { Client, Intents} = require('discord.js');
+const { Client, Intents } = require('discord.js');
 const axios = require('./modules/axios')
 
 const rest = new REST({version: '9'}).setToken(process.env.DISCORD_BOT_TOKEN);

@@ -5,12 +5,45 @@ const fs = require("fs");
 const nodeHtmlToImage = require("node-html-to-image");
 const axios = require('./modules/axios')
 const font2base64 = require('node-font2base64')
+const redis = require('redis')
+const { promisify } = require('util')
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-
+let redisClient;
 
 client.on('messageCreate', async message => {
-    // console.log(message)
+    if (!redisClient) {
+        redisClient = await redis.createClient(process.env.REDIS_URL,{
+            tls: {
+                rejectUnauthorized: false
+            }
+        })
+        redisClient.on("error", function(error) {
+            console.error(error);
+        });
+    }
+
+    const getAsync = promisify(redisClient.get).bind(redisClient)
+
+    let lastMessageTime;
+    await getAsync(message.author.id).then(data => {
+        lastMessageTime = data
+    });
+    const now = Date.now() / 1000
+
+    if (!lastMessageTime || now - 60 > lastMessageTime) {
+        const api = await axios.api()
+
+        await api.post(`users/give-message-xp`, {
+            user: message.author
+        }).then(response => {
+            console.log("XP Given")
+        }).catch(error => {
+            console.log(error)
+        })
+
+        redisClient.set(message.author.id, now.toString());
+    }
 })
 
 client.on('interactionCreate', async interaction => {
@@ -62,7 +95,7 @@ client.on('interactionCreate', async interaction => {
             const api = await axios.api()
             fs.readFile(__dirname + '/rank-card/index.html', async (err, data) => {
                 try {
-                    const backgroundImage = fs.readFileSync('./rank-card/background.png');
+                    const backgroundImage = fs.readFileSync('./rank-card/background.jpg');
                     const base64BackgroundImage = new Buffer.from(backgroundImage).toString('base64');
                     const backgroundImageUri = 'data:image/png;base64,' + base64BackgroundImage;
 

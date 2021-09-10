@@ -57,7 +57,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'test') {
-        await interaction.deferReply({ ephemeral: true })
+        await interaction.reply({ content: "Fetching Rank..." })
         try {
             const api = await axios.api()
             fs.readFile(__dirname + '/rank-card/index.html', async (err, data) => {
@@ -110,15 +110,9 @@ client.on('interactionCreate', async interaction => {
 
                         if (interaction) {
                             if (rankCard) {
-                                const image = new MessageAttachment(rankCard, "discordjs")
-                                const embed = new MessageEmbed()
-                                    .setImage("attachment://discordjs.png")
-                                console.log(image)
-                                await interaction.editReply({embeds: [embed], files: [image]})
-                                console.log("test2")
+                                await interaction.followUp({files: [rankCard]})
                             } else {
                                 await interaction.editReply('Error, try again.')
-                                console.log("test44")
                             }
                         }
                     }
@@ -130,6 +124,7 @@ client.on('interactionCreate', async interaction => {
                 }
             });
         } catch (ex) {
+            console.log(ex)
             if (interaction) {
                 await interaction.editReply('Error, try again.')
             }

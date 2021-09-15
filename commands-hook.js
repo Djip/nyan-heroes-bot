@@ -12,7 +12,7 @@ const teamRoleId = 878912061592190976;
 
 const commandsHook = [
     new SlashCommandBuilder()
-        .setName('test')
+        .setName('rank')
         .setDescription('Fetch current rank/level information'),
     new SlashCommandBuilder()
         .setName('give-xp')
@@ -24,6 +24,9 @@ const commandsHook = [
         .setDescription('Fetch current rank/level information')
         .addUserOption(option => option.setName('user').setDescription('The user to give xp').setRequired(true))
         .addIntegerOption(option => option.setName('xp').setDescription('How much xp to give').setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('link-twitter')
+        .setDescription('Link your Twitter to gain XP from re-tweets')
 ]
     .map(command => command.toJSON());
 
@@ -35,28 +38,32 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_BOT_TOKEN);
             Routes.applicationGuildCommands(process.env.DISCORD_BOT_CLIENT_ID, process.env.DISCORD_NYAN_HEROES_GUILT_ID),
             { body: commandsHook },
         ).then(async response => {
-            const fullPermissions = []
-            response.forEach(commandInfo => {
-                if (commandInfo.name === 'give-xp' || commandInfo.name === 'subtract-xp') {
-                    fullPermissions.push({
-                        id: commandInfo.id,
-                        permissions: [
-                            {
-                                id: everyoneRoleId,
-                                type: 'ROLE',
-                                permission: false
-                            },
-                            {
-                                id: teamRoleId,
-                                type: 'ROLE',
-                                permission: true
-                            }
-                        ]
-                    })
-                }
-            })
+            for (const commandInfo of response) {
+                if (commandInfo.name === 'give-xp' || commandInfo.name === 'subtract-xp' || commandInfo === 'rank' || commandInfo === 'link-twitter') {
+                    let command;
+                    await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID).commands.fetch(commandInfo.id).then(data => {
+                        command = data;
+                        console.log(data)
+                    }).catch(error => {
+                        console.log(error)
+                    });
 
-            await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)?.commands.permissions.set({fullPermissions})
+                    const permissions = [
+                        {
+                            id: everyoneRoleId.toString(),
+                            type: 'ROLE',
+                            permission: false
+                        },
+                        {
+                            id: teamRoleId.toString(),
+                            type: 'ROLE',
+                            permission: true
+                        }
+                    ]
+
+                    await command.permissions.add({ permissions })
+                }
+            }
         });
 
         console.log('Successfully registered application commandsHook.');

@@ -7,6 +7,7 @@ const axios = require('./modules/axios')
 const font2base64 = require('node-font2base64')
 const redis = require('redis')
 const { promisify } = require('util')
+const {TwitterApi} = require("twitter-api-v2");
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 let redisClient;
@@ -37,7 +38,7 @@ client.on('messageCreate', async message => {
         await api.post(`users/give-message-xp`, {
             user: message.author
         }).then(response => {
-            console.log("XP Given")
+            console.log("Message XP Given")
         }).catch(error => {
             console.log(error)
         })
@@ -89,7 +90,7 @@ client.on('interactionCreate', async interaction => {
         })
     }
 
-    if (interaction.commandName === 'test') {
+    if (interaction.commandName === 'rank') {
         await interaction.reply({ content: "Fetching Rank..." })
         try {
             const api = await axios.api()
@@ -162,6 +163,15 @@ client.on('interactionCreate', async interaction => {
                 await interaction.editReply('Error, try again.')
             }
         }
+    }
+
+    if (interaction.commandName === 'link-twitter') {
+        const user = await client.users.cache.get(interaction.member.user.id);
+        const twitterClient = new TwitterApi({ appKey: process.env.TWITTER_API_KEY, appSecret: process.env.TWITTER_API_KEY_SECRET })
+        const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + user.id
+        const authLink = twitterClient.generateAuthLink()
+        user.send(`Please use the following URL to link your Twitter account: ${authLink}`);
+        interaction.reply({ content: 'Please look in your DM.', ephemeral: true })
     }
 })
 

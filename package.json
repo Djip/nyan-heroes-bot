@@ -15,6 +15,7 @@
     "discord-api-types": "^0.22.0",
     "discord.js": "^13.1.0",
     "dotenv": "^10.0.0",
+    "express": "^4.17.1",
     "node-font2base64": "^0.7.1",
     "node-html-to-image": "^3.2.0",
     "pg": "^8.7.1",

@@ -10,21 +10,10 @@ const { promisify } = require('util')
 const {TwitterApi} = require("twitter-api-v2");
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
-let redisClient;
+let redisClient, getAsync;
 
 client.on('messageCreate', async message => {
-    if (!redisClient) {
-        redisClient = await redis.createClient(process.env.REDIS_URL,{
-            tls: {
-                rejectUnauthorized: false
-            }
-        })
-        redisClient.on("error", function(error) {
-            console.error(error);
-        });
-    }
-
-    const getAsync = promisify(redisClient.get).bind(redisClient)
+    setupRedis()
 
     let lastMessageTime;
     await getAsync(message.author.id).then(data => {
@@ -166,13 +155,31 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'link-twitter') {
+        setupRedis()
         const user = await client.users.cache.get(interaction.member.user.id);
         const twitterClient = new TwitterApi({ appKey: process.env.TWITTER_API_KEY, appSecret: process.env.TWITTER_API_KEY_SECRET })
         const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + user.id
-        const authLink = twitterClient.generateAuthLink()
-        user.send(`Please use the following URL to link your Twitter account: ${authLink}`);
+        const authLink = await twitterClient.generateAuthLink(callbackUrl)
+        redisClient.set('twitter-auth-' + user.id, JSON.stringify({oauth_token: authLink.oauth_token, oauth_token_secret: authLink.oauth_token_secret}))
+
+        user.send(`Please use the following URL to link your Twitter account: ${authLink.url}`);
         interaction.reply({ content: 'Please look in your DM.', ephemeral: true })
     }
 })
 
 client.login(process.env.DISCORD_BOT_TOKEN)
+
+async function setupRedis() {
+    if (!redisClient) {
+        redisClient = await redis.createClient(process.env.REDIS_URL, {
+            tls: {
+                rejectUnauthorized: false
+            }
+        })
+        redisClient.on("error", function (error) {
+            console.error(error);
+        });
+
+        getAsync = promisify(redisClient.get).bind(redisClient)
+    }
+}

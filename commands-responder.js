@@ -92,6 +92,7 @@ client.on('interactionCreate', async interaction => {
                     let rankData;
                     await api.get(`users/rank`, {
                         params: {
+                            id: interaction.user.id,
                             username: interaction.user.username,
                             discriminator: interaction.user.discriminator,
                             avatar: interaction.user.avatar
@@ -155,7 +156,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'link-twitter') {
-        setupRedis()
+        await setupRedis()
         const user = await client.users.cache.get(interaction.member.user.id);
         const twitterClient = new TwitterApi({ appKey: process.env.TWITTER_API_KEY, appSecret: process.env.TWITTER_API_KEY_SECRET })
         const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + user.id

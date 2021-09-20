@@ -1,6 +1,11 @@
 const redis = require('redis')
 const {promisify} = require("util");
 const {TwitterApi} = require("twitter-api-v2");
+const axios = require('../modules/axios')
+const {Client, Intents} = require("discord.js");
+const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
+
+client.login(process.env.DISCORD_BOT_TOKEN)
 
 exports.callback = async function (req, res) {
     const redisClient = await redis.createClient(process.env.REDIS_URL, {
@@ -33,11 +38,41 @@ exports.callback = async function (req, res) {
         accessSecret: credentials.oauth_token_secret
     })
 
-    twitterClient.login(oauth_verifier).then(({ client: loggedClient, accessToken, accessSecret }) => {
-        console.log(loggedClient)
-        console.log(accessToken)
-        console.log(accessSecret)
-    }).catch(() => {
+    await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
+        await loggedClient.currentUser().then(async user => {
+            let success;
+            const api = await axios.api()
+            const discordUser = await client.users.cache.get(req.query.discord_id);
+            await api.post('twitter/information', {
+                user: discordUser,
+                access_token: accessToken,
+                access_secret: accessSecret,
+                id: user.id,
+                screen_name: user.screen_name,
+            }).then(data => {
+                discordUser.send(`Your Twitter account has been linked`);
+                success = true
+            }).catch(error => {
+                console.log(error)
+                discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
+                success = false
+            })
+
+            if (success) {
+                await loggedClient.v2.userTimeline(user.id).then(response => {
+                    for (const tweet of response) {
+                        console.log(tweet)
+                    }
+                }).catch(error => {
+                    console.log(error)
+                })
+            }
+        }).catch(error => {
+            console.log(error)
+            res.status(403).send('Something went wrong, please try again.')
+        })
+    }).catch(error => {
+        console.log(error)
         res.status(403).send('Invalid verifier or access tokens!')
     })
 }

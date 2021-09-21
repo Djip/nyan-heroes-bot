@@ -13,15 +13,9 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 let redisClient, getAsync;
 
 client.on('messageCreate', async message => {
-    setupRedis()
+    const messageWordCount = wordCount(message.content)
 
-    let lastMessageTime;
-    await getAsync(message.author.id).then(data => {
-        lastMessageTime = data
-    });
-    const now = Date.now() / 1000
-
-    if (!lastMessageTime || now - 60 > lastMessageTime) {
+    if (messageWordCount >= 5) {
         const api = await axios.api()
 
         await api.post(`users/give-message-xp`, {
@@ -31,8 +25,6 @@ client.on('messageCreate', async message => {
         }).catch(error => {
             console.log(error)
         })
-
-        redisClient.set(message.author.id, now.toString());
     }
 })
 
@@ -183,4 +175,8 @@ async function setupRedis() {
 
         getAsync = promisify(redisClient.get).bind(redisClient)
     }
+}
+
+function wordCount(string) {
+    return string.split(' ').length;
 }

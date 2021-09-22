@@ -12,7 +12,7 @@ const teamRoleId = 878912061592190976;
 
 const commandsHook = [
     new SlashCommandBuilder()
-        .setName('rank')
+        .setName('rank-test')
         .setDescription('Fetch current rank/level information'),
     new SlashCommandBuilder()
         .setName('leaderboard')

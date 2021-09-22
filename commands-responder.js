@@ -168,7 +168,16 @@ client.on('interactionCreate', async interaction => {
         try {
             const api = await axios.api()
             await api.get('users/leaderboard').then(response => {
-                console.log(response)
+                let description = "", count = 1;
+                response.data.data.forEach(user => {
+                    description += `#${count} - ${user.username} - Level: ${user.level.level} - XP: ${user.xp}\n`
+                    count++;
+                })
+                const message = new MessageEmbed()
+                    .setTitle('Leaderboard')
+                    .setDescription(description)
+
+                interaction.reply({embeds: [message]})
             }).catch(error => {
                 console.log(error)
             })

@@ -16,7 +16,7 @@ client.login(process.env.DISCORD_BOT_TOKEN);
         await rest.get(Routes.guildInvites(process.env.DISCORD_NYAN_HEROES_GUILT_ID)).then(async response => {
             for (const invite of response) {
                 if (invite.uses > 0) {
-                    api.post('discord-invites/give-xp', invite).then(response => {
+                    await api.post('discord-invites/give-xp', invite).then(response => {
                         console.log(response)
                     }).catch(error => {
                         console.log(error)
@@ -24,6 +24,8 @@ client.login(process.env.DISCORD_BOT_TOKEN);
                 }
             }
         })
+
+        process.exit()
     } catch (error) {
         console.error(error)
     }

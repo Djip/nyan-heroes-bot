@@ -12,8 +12,11 @@ const teamRoleId = 878912061592190976;
 
 const commandsHook = [
     new SlashCommandBuilder()
-        .setName('rank')
+        .setName('rank-test')
         .setDescription('Fetch current rank/level information'),
+    new SlashCommandBuilder()
+        .setName('leaderboard')
+        .setDescription('Fetch top 10 Leaderboard'),
     new SlashCommandBuilder()
         .setName('give-xp')
         .setDescription('Fetch current rank/level information')
@@ -39,7 +42,7 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_BOT_TOKEN);
             { body: commandsHook },
         ).then(async response => {
             for (const commandInfo of response) {
-                if (commandInfo.name === 'give-xp' || commandInfo.name === 'subtract-xp' || commandInfo === 'rank' || commandInfo === 'link-twitter') {
+                if (commandInfo.name === 'give-xp' || commandInfo.name === 'subtract-xp' || commandInfo === 'rank' || commandInfo === 'link-twitter' || commandInfo === 'leaderboard') {
                     let command;
                     await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID).commands.fetch(commandInfo.id).then(data => {
                         command = data;
@@ -66,6 +69,7 @@ const rest = new REST({ version: '9' }).setToken(process.env.DISCORD_BOT_TOKEN);
             }
         });
 
+        process.exit()
         console.log('Successfully registered application commandsHook.');
     } catch (error) {
         console.error(error);

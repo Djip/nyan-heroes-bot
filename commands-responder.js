@@ -71,7 +71,7 @@ client.on('interactionCreate', async interaction => {
         })
     }
 
-    if (interaction.commandName === 'rank') {
+    if (interaction.commandName === 'rank-test') {
         await interaction.reply({ content: "Fetching Rank..." })
         try {
             const api = await axios.api()
@@ -84,7 +84,7 @@ client.on('interactionCreate', async interaction => {
                     let rankData;
                     await api.get(`users/rank`, {
                         params: {
-                            id: interaction.user.id,
+                            discord_id: interaction.user.id,
                             username: interaction.user.username,
                             discriminator: interaction.user.discriminator,
                             avatar: interaction.user.avatar
@@ -92,6 +92,7 @@ client.on('interactionCreate', async interaction => {
                     }).then(response => {
                         rankData = response.data.data
                     }).catch(async error => {
+                        console.log(error)
                         if (interaction) {
                             await interaction.editReply('Error, try again.')
                         }
@@ -148,15 +149,34 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'link-twitter') {
-        await setupRedis()
-        const user = await client.users.cache.get(interaction.member.user.id);
-        const twitterClient = new TwitterApi({ appKey: process.env.TWITTER_API_KEY, appSecret: process.env.TWITTER_API_KEY_SECRET })
-        const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + user.id
-        const authLink = await twitterClient.generateAuthLink(callbackUrl)
-        redisClient.set('twitter-auth-' + user.id, JSON.stringify({oauth_token: authLink.oauth_token, oauth_token_secret: authLink.oauth_token_secret}))
+        try {
+            await setupRedis()
+            const user = await client.users.cache.get(interaction.member.user.id);
+            const twitterClient = new TwitterApi({ appKey: process.env.TWITTER_API_KEY, appSecret: process.env.TWITTER_API_KEY_SECRET })
+            const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + user.id
+            const authLink = await twitterClient.generateAuthLink(callbackUrl)
+            redisClient.set('twitter-auth-' + user.id, JSON.stringify({oauth_token: authLink.oauth_token, oauth_token_secret: authLink.oauth_token_secret}))
 
-        user.send(`Please use the following URL to link your Twitter account: ${authLink.url}`);
-        interaction.reply({ content: 'Please look in your DM.', ephemeral: true })
+            user.send(`Please use the following URL to link your Twitter account: ${authLink.url}`);
+            interaction.reply({ content: 'Please look in your DM.', ephemeral: true })
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    if (interaction.commandName === 'leaderboard') {
+        try {
+            const api = await axios.api()
+            await api.get('users/leaderboard').then(response => {
+                console.log(response)
+            }).catch(error => {
+                console.log(error)
+            })
+        } catch (e) {
+            if (interaction) {
+                interaction.reply("Couldn't fetch Leaderboard, try again.")
+            }
+        }
     }
 })
 

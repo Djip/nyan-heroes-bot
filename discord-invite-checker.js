@@ -14,7 +14,7 @@ client.login(process.env.DISCORD_BOT_TOKEN);
         const api = await axios.api();
 
         await rest.get(Routes.guildInvites(process.env.DISCORD_NYAN_HEROES_GUILT_ID)).then(async response => {
-            for (const invite of response) {
+            for await (const invite of response) {
                 if (invite.uses > 0) {
                     await api.post('discord-invites/give-xp', invite).then(response => {
                         console.log(response)

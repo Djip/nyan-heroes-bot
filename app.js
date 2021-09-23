@@ -9,7 +9,7 @@ app.get('/twitter/callback', (req, res, next) => {
 })
 
 if (process.env.NODE_ENV === 'production') {
-    app.listen(443)
+    app.listen(process.env.PORT)
 } else {
-    app.listen(2000)
+    app.listen(process.env.PORT)
 }

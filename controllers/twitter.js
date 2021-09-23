@@ -38,27 +38,19 @@ exports.callback = async function (req, res) {
         accessSecret: credentials.oauth_token_secret
     })
 
+    const discordUser = await client.users.cache.get(req.query.discord_id);
+    console.log(discordUser)
+
     await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
         await loggedClient.currentUser().then(async user => {
-            let success;
             const api = await axios.api()
-            const discordUser = await client.users.cache.get(req.query.discord_id);
             await api.post('twitter/information', {
                 user: discordUser,
                 access_token: accessToken,
                 access_secret: accessSecret,
                 id: user.id,
                 screen_name: user.screen_name,
-            }).then(data => {
-                discordUser.send(`Your Twitter account has been linked`);
-                success = true
-            }).catch(error => {
-                console.log(error)
-                discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
-                success = false
-            })
-
-            if (success) {
+            }).then(async data => {
                 await loggedClient.v2.userTimeline(user.id).then(response => {
                     for (const tweet of response) {
                         console.log(tweet)
@@ -66,13 +58,26 @@ exports.callback = async function (req, res) {
                 }).catch(error => {
                     console.log(error)
                 })
-            }
+
+                closeWindow(res)
+                discordUser.send(`Your Twitter account has been linked`);
+            }).catch(error => {
+                console.log(error)
+                closeWindow(res)
+                discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
+            })
         }).catch(error => {
             console.log(error)
-            res.status(403).send('Something went wrong, please try again.')
+            closeWindow(res)
+            discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
         })
     }).catch(error => {
         console.log(error)
-        res.status(403).send('Invalid verifier or access tokens!')
+        closeWindow(res)
+        discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
     })
+}
+
+function closeWindow(res) {
+    res.send('<script>window.close()</script>')
 }

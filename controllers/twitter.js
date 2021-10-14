@@ -7,7 +7,7 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 
 client.login(process.env.DISCORD_BOT_TOKEN)
 
-exports.callback = async function (req, res) {
+async function callback(req, res) {
     const redisClient = await redis.createClient(process.env.REDIS_URL, {
         tls: {
             rejectUnauthorized: false
@@ -22,6 +22,7 @@ exports.callback = async function (req, res) {
     let credentials;
     await getAsync('twitter-auth-' + req.query.discord_id).then(response => {
         credentials = JSON.parse(response)
+        redisClient.del('twitter-auth-' + req.query.discord_id);
     }).catch(error => {
         res.status(400).send('Something went wrong, try again.')
     });
@@ -38,29 +39,31 @@ exports.callback = async function (req, res) {
         accessSecret: credentials.oauth_token_secret
     })
 
-    const discordUser = await client.users.cache.get(req.query.discord_id);
-    console.log(discordUser)
+    let discordUser
+    await client.guilds.fetch(process.env.DISCORD_NYAN_HEROES_GUILT_ID).then(async guild => {
+        await guild.members.fetch(req.query.discord_id).then(member => {
+            discordUser = member.user
+        })
+    })
 
     await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
-        await loggedClient.currentUser().then(async user => {
+        await loggedClient.currentUser().then(async  twitterUser => {
             const api = await axios.api()
             await api.post('twitter/information', {
                 user: discordUser,
                 access_token: accessToken,
                 access_secret: accessSecret,
-                id: user.id,
-                screen_name: user.screen_name,
+                id: twitterUser.id,
+                screen_name: twitterUser.screen_name,
             }).then(async data => {
-                await loggedClient.v2.userTimeline(user.id).then(response => {
-                    for (const tweet of response) {
-                        console.log(tweet)
-                    }
-                }).catch(error => {
-                    console.log(error)
-                })
+                await discordUser.send(`Your Twitter account has been linked`);
+
+                // Put a date/time restriciton on this
+                redisClient.publish("mission_1_" + req.query.discord_id, "2")
+                redisClient.quit()
 
                 closeWindow(res)
-                discordUser.send(`Your Twitter account has been linked`);
+                // await checkTweets(loggedClient, twitterUser, discordUser)
             }).catch(error => {
                 console.log(error)
                 closeWindow(res)
@@ -78,6 +81,41 @@ exports.callback = async function (req, res) {
     })
 }
 
+async function interactions(loggedClient, twitterUser, discordUser) {
+    await checkTweets()
+}
+
 function closeWindow(res) {
     res.send('<script>window.close()</script>')
+}
+
+async function checkTweets(loggedClient, twitterUser, apiUser) {
+    const api = await axios.api()
+    let tweets = []
+    await loggedClient.v2.userTimeline(twitterUser.id, {exclude: 'replies'}).then(async response => {
+        tweets = tweets.concat(response.tweets)
+        await response.fetchNext(80).then(response => {
+            tweets = tweets.concat(response.tweets)
+        })
+
+        const tweetXp = []
+        for (const tweet of tweets) {
+            if (tweet.text.indexOf("RT npm install --save @sentry/node @sentry/tracing\n@nyanheroes") !== -1) {
+                tweetXp.push(tweet)
+            }
+        }
+
+        await api.post('twitter/xp/retweet', {tweets: tweetXp, user: apiUser}).then(response => {
+
+        }).catch(error => {
+            console.log(error)
+        })
+    }).catch(error => {
+        console.log(error)
+    })
+}
+
+module.exports = {
+    callback,
+    interactions
 }

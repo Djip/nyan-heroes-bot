@@ -94,13 +94,10 @@ async function checkTweets(loggedClient, twitterUser, apiUser) {
     let tweets = []
     await loggedClient.v2.userTimeline(twitterUser.id, {exclude: 'replies'}).then(async response => {
         tweets = tweets.concat(response.tweets)
-        await response.fetchNext(80).then(response => {
-            tweets = tweets.concat(response.tweets)
-        })
 
         const tweetXp = []
         for (const tweet of tweets) {
-            if (tweet.text.indexOf("RT npm install --save @sentry/node @sentry/tracing\n@nyanheroes") !== -1) {
+            if (tweet.text.indexOf("RT @nyanheroes") !== -1) {
                 tweetXp.push(tweet)
             }
         }

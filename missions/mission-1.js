@@ -5,7 +5,7 @@ const redis = require("redis");
 const {promisify} = require("util");
 const {TwitterApi} = require("twitter-api-v2");
 const axios = require('../modules/axios')
-const { validateEmail } = require("../util")
+const { validateEmail, completeMission } = require("../util")
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES, Intents.FLAGS.GUILD_MESSAGE_REACTIONS, Intents.FLAGS.DIRECT_MESSAGES, Intents.FLAGS.DIRECT_MESSAGE_TYPING, Intents.FLAGS.DIRECT_MESSAGE_REACTIONS] });
 const emoji = '<:NyanWave:894093355552768060>'
@@ -24,10 +24,10 @@ client.on('ready', async interaction => {
     const channel = client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID).channels.cache.get('896318245127225354');
 
     const message = await channel.send({ embeds: [messageEmbed] })
-    message.react(emoji)
+    await message.react(emoji)
 
     client.on('messageReactionAdd', async (reaction, user) => {
-        if (reaction.emoji.id === emojiId && user.id !== process.env.DISCORD_BOT_CLIENT_ID) {
+        if (reaction.emoji.id === emojiId && user.id !== process.env.DISCORD_BOT_CLIENT_ID && reaction.message.id === message.id) {
             try {
                 let mission = 1;
                 await api.get('missions/1', {
@@ -164,6 +164,7 @@ async function stepFour(user) {
         const guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
         const fetchedUser = await guild.members.fetch(user.id)
         if (fetchedUser.nickname.match(/Nyan/gi)) {
+            await completeMission(api, user, 1)
             await user.send(`You have officially completed Mission 1!`)
         } else {
             await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. We will automatically check again in 2 minutes from now.`)
@@ -171,6 +172,7 @@ async function stepFour(user) {
                 const guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
                 const fetchedUser = await guild.members.fetch(user.id)
                 if (fetchedUser.nickname.match(/Nyan/gi)) {
+                    await completeMission(api, user, 1)
                     await user.send(`You have officially completed Mission 1!`)
                 } else {
                     await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. Please re-react to the message in the #mission-1 channel to complete Mission 1, when you have changed your nickname.`)

@@ -225,7 +225,9 @@ client.on('interactionCreate', async interaction => {
                     redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
                         oauth_token: authLink.oauth_token,
                         oauth_token_secret: authLink.oauth_token_secret
-                    }))
+                    }), function(error) {
+                        console.log(error)
+                    })
 
                     if (interaction) {
                         await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})

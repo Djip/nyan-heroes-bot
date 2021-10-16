@@ -22,13 +22,18 @@ async function callback(req, res) {
     let credentials;
     await getAsync('twitter-auth-' + req.query.discord_id).then(response => {
         credentials = JSON.parse(response)
+        console.log(credentials)
         redisClient.del('twitter-auth-' + req.query.discord_id);
     }).catch(error => {
         res.status(400).send('Something went wrong, try again.')
     });
     const { oauth_verifier } = req.query
 
-    if (!credentials.oauth_token || !oauth_verifier || !credentials.oauth_token_secret) {
+    if (!credentials) {
+        res.send(`Your Twitter account has been linked successfully, please proceed to your next task.`)
+        redisClient.quit()
+    } else if (!credentials.oauth_token || !oauth_verifier || !credentials.oauth_token_secret) {
+        redisClient.quit()
         return res.status(400).send('You denied the app or your session expired!');
     }
 

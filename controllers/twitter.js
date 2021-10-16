@@ -35,45 +35,52 @@ async function callback(req, res) {
     } else if (!credentials.oauth_token || !oauth_verifier || !credentials.oauth_token_secret) {
         redisClient.quit()
         return res.status(400).send('You denied the app or your session expired!');
-    }
+    } else {
+        const twitterClient = new TwitterApi({
+            appKey: process.env.TWITTER_API_KEY,
+            appSecret: process.env.TWITTER_API_KEY_SECRET,
+            accessToken: credentials.oauth_token,
+            accessSecret: credentials.oauth_token_secret
+        })
 
-    const twitterClient = new TwitterApi({
-        appKey: process.env.TWITTER_API_KEY,
-        appSecret: process.env.TWITTER_API_KEY_SECRET,
-        accessToken: credentials.oauth_token,
-        accessSecret: credentials.oauth_token_secret
-    })
-
-    let discordUser
-    await client.guilds.fetch(process.env.DISCORD_NYAN_HEROES_GUILT_ID).then(async guild => {
-        await guild.members.fetch(req.query.discord_id).then(member => {
-            discordUser = member.user
+        let discordUser
+        await client.guilds.fetch(process.env.DISCORD_NYAN_HEROES_GUILT_ID).then(async guild => {
+            await guild.members.fetch(req.query.discord_id).then(member => {
+                discordUser = member.user
+            }).catch(error => {
+                console.log(error)
+            })
         }).catch(error => {
             console.log(error)
         })
-    }).catch(error => {
-        console.log(error)
-    })
 
-    await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
-        await loggedClient.currentUser().then(async  twitterUser => {
-            const api = await axios.api()
-            await api.post('twitter/information', {
-                user: discordUser,
-                access_token: accessToken,
-                access_secret: accessSecret,
-                id: twitterUser.id,
-                screen_name: twitterUser.screen_name,
-            }).then(async data => {
-                res.send(`Your Twitter account has been linked successfully, please proceed to your next task.`)
-                // await discordUser.send(`Your Twitter account has been linked`);
-                //
-                // // Put a date/time restriciton on this
-                // redisClient.publish("mission_1_" + req.query.discord_id, "2")
-                redisClient.quit()
+        await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
+            await loggedClient.currentUser().then(async  twitterUser => {
+                const api = await axios.api()
+                await api.post('twitter/information', {
+                    user: discordUser,
+                    access_token: accessToken,
+                    access_secret: accessSecret,
+                    id: twitterUser.id,
+                    screen_name: twitterUser.screen_name,
+                }).then(async data => {
+                    res.send(`Your Twitter account has been linked successfully, please proceed to your next task.`)
+                    // await discordUser.send(`Your Twitter account has been linked`);
+                    //
+                    // // Put a date/time restriciton on this
+                    // redisClient.publish("mission_1_" + req.query.discord_id, "2")
+                    redisClient.quit()
 
-                // closeWindow(res)
-                // await checkTweets(loggedClient, twitterUser, discordUser)
+                    // closeWindow(res)
+                    // await checkTweets(loggedClient, twitterUser, discordUser)
+                }).catch(error => {
+                    console.log(error)
+                    res.send(`Something went wrong linking your Twitter account, please use the command /mission-1 again.`)
+                    redisClient.quit()
+                    // console.log(error)
+                    // closeWindow(res)
+                    // discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
+                })
             }).catch(error => {
                 console.log(error)
                 res.send(`Something went wrong linking your Twitter account, please use the command /mission-1 again.`)
@@ -90,14 +97,7 @@ async function callback(req, res) {
             // closeWindow(res)
             // discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
         })
-    }).catch(error => {
-        console.log(error)
-        res.send(`Something went wrong linking your Twitter account, please use the command /mission-1 again.`)
-        redisClient.quit()
-        // console.log(error)
-        // closeWindow(res)
-        // discordUser.send(`Something went wrong linking your Twitter account, please try again.`);
-    })
+    }
 }
 
 async function interactions(loggedClient, twitterUser, discordUser) {

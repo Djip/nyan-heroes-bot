@@ -18,8 +18,29 @@ client.on('ready', async interaction => {
     await setupRedis()
     api = await axios.api();
     const messageEmbed = new MessageEmbed()
-        .setTitle('Mission 1')
-        .setDescription("Test description\nTest description")
+        .setTitle('🔼 MISSION 1 INCOMING TRANSMISSION 🔼')
+        .setDescription(`
+TIME START:  October 16th @ 11 AM PST
+TIME END:  October 17th @ 9 AM PST
+
+[▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬]
+
+🔽 MISSION 1 TASKS 🔽
+
+Task 1 - First make sure your "Direct Messages" are ENABLED in your discord privacy settings
+Task 2 - React to the ${emoji} below this message and our NYAN BOT will send you a DM with further instructions
+Task 3 - Fill out your information with our NYAN BOT - Twitter, Email and Solana Wallet Address (MAKE SURE YOU TRIPLE CHECK YOUR WALLET ADDRESS!!!!)
+Task 4 - Follow our Twitter https://twitter.com/nyanheroes and Telegram https://t.me/nyanheroes/
+Task 5 - Change your discord nickname to include the word "NYAN" in it
+
+[▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬]
+
+Once your tasks are complete, our NYAN BOT will send you a confirmation message.
+
+Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
+
+😼 Good luck on your first mission soldier!😼
+`)
 
     const channel = client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID).channels.cache.get('896318245127225354');
 
@@ -169,13 +190,17 @@ async function stepFour(user) {
         } else {
             await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. We will automatically check again in 2 minutes from now.`)
             setTimeout(async () => {
-                const guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
-                const fetchedUser = await guild.members.fetch(user.id)
-                if (fetchedUser.nickname.match(/Nyan/gi)) {
-                    await completeMission(api, user, 1)
-                    await user.send(`You have officially completed Mission 1!`)
-                } else {
-                    await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. Please re-react to the message in the #mission-1 channel to complete Mission 1, when you have changed your nickname.`)
+                try {
+                    const guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
+                    const fetchedUser = await guild.members.fetch(user.id)
+                    if (fetchedUser.nickname.match(/Nyan/gi)) {
+                        await completeMission(api, user, 1)
+                        await user.send(`You have officially completed Mission 1!`)
+                    } else {
+                        await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. Please re-react to the message in the #mission-1 channel to complete Mission 1, when you have changed your nickname.`)
+                    }
+                } catch (e) {
+                    console.log(e)
                 }
             }, 120000)
         }

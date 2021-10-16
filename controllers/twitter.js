@@ -22,7 +22,6 @@ async function callback(req, res) {
     let credentials;
     await getAsync('twitter-auth-' + req.query.discord_id).then(response => {
         credentials = JSON.parse(response)
-        console.log(credentials)
         redisClient.del('twitter-auth-' + req.query.discord_id);
     }).catch(error => {
         res.status(400).send('Something went wrong, try again.')

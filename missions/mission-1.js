@@ -49,6 +49,7 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
 
     client.on('messageReactionAdd', async (reaction, user) => {
         if (reaction.emoji.id === emojiId && user.id !== process.env.DISCORD_BOT_CLIENT_ID && reaction.message.id === message.id) {
+            let missionClient;
             try {
                 let mission = 1;
                 await api.get('missions/1', {
@@ -60,8 +61,8 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
                     }
                 }).then(response => {
                     mission = response.data.status
-                }).catch(error => {
-
+                }).catch(async error => {
+                    await user.send(`Something went during Mission 1, please try to re-react to the message.`).then().catch()
                 })
 
                 if (mission !== 4) {
@@ -87,7 +88,7 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
                         await stepThree(user)
                     }
 
-                    const missionClient = await setupClient()
+                    missionClient = await setupClient()
                     missionClient.on("message", async (channel, progress) => {
                         let data = channel.split('_')
                         const guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
@@ -98,7 +99,7 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
                         } else if (progress === "3") {
                             await stepThree(user)
                         } else if (progress === "4") {
-                            await stepFour(user.user)
+                            await stepFour(user)
                         }
                     })
                     missionClient.subscribe('mission_1_' + user.id)
@@ -107,6 +108,12 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
                     await stepFour(user)
                 }
             } catch (e) {
+                if (missionClient) {
+                    removeMissionClient(missionClient)
+                }
+
+                await user.send(`Something went during Mission 1, please try to re-react to the message.`).catch()
+
                 console.log(e)
             }
         }
@@ -118,6 +125,12 @@ client.login(process.env.DISCORD_BOT_TOKEN).then().catch(error => {
     console.log(process.env.DISCORD_BOT_TOKEN)
     console.log(error)
 })
+
+function removeMissionClient(missionClient) {
+    missionClient.unsubscribe()
+    missionClient.quit()
+    missionClients.splice(missionClients.indexOf(missionClient), 1)
+}
 
 async function setupRedis() {
     if (!redisClient) {
@@ -149,10 +162,10 @@ async function stepTwo(user) {
 
             if (validateEmail(message.content)) {
                 await api.post('missions/1', { user: message.author, email: message.content}).then(async response => {
-                    await message.author.send(`Your email has been saved`)
+                    await message.author.send(`Your email has been saved`).catch()
                     redisClient.publish("mission_1_" + message.author.id, "3")
                 }).catch(error => {
-                    message.author.send(``)
+                    message.author.send(`Something went during Mission 1, please try to re-react to the message.`).catch()
                 })
             }
         }).catch(error => {
@@ -171,10 +184,12 @@ async function stepThree(user) {
             const message = collected.last();
 
             await api.post('missions/1', {user: message.author, wallet: message.content}).then(async response => {
-                await message.author.send(`Your Wallet has been saved`)
+                await message.author.send(`Your Wallet has been saved`).catch(error => {
+                    console.log(error)
+                })
                 redisClient.publish("mission_1_" + message.author.id, "4")
             }).catch(error => {
-                message.author.send(``)
+                message.author.send(`Something went during Mission 1, please try to re-react to the message.`).catch()
             })
         }).catch(error => {
             console.log(error)
@@ -199,9 +214,9 @@ async function stepFour(user) {
                     const fetchedUser = await guild.members.fetch(user.id)
                     if (fetchedUser.nickname.match(/Nyan/gi)) {
                         await completeMission(api, user, 1)
-                        await user.send(`You have officially completed Mission 1!`)
+                        await user.send(`You have officially completed Mission 1!`).catch()
                     } else {
-                        await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. Please re-react to the message in the #mission-1 channel to complete Mission 1, when you have changed your nickname.`)
+                        await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. Please re-react to the message in the #mission-1 channel to complete Mission 1, when you have changed your nickname.`).catch()
                     }
                 } catch (e) {
                     console.log(e)

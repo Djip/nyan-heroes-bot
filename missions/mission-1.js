@@ -201,17 +201,19 @@ async function stepThree(user) {
 
 async function stepFour(user) {
     try {
-        const guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
-        const fetchedUser = await guild.members.fetch(user.id)
+        let guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
+        let fetchedUser = await guild.members.fetch(user.id)
         if (fetchedUser.nickname.match(/Nyan/gi)) {
             await completeMission(api, user, 1)
             await user.send(`You have officially completed Mission 1!`)
         } else {
             await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. We will automatically check again in 2 minutes from now.`)
-            setTimeout(async () => {
+            setTimeout( async () => {
                 try {
-                    const guild = await client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
-                    const fetchedUser = await guild.members.fetch(user.id)
+                    let guild = await client.guilds.fetch(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
+                    await guild.members.fetch({ user: user.id, force: true}).then(response => {
+                        fetchedUser = response
+                    })
                     if (fetchedUser.nickname.match(/Nyan/gi)) {
                         await completeMission(api, user, 1)
                         await user.send(`You have officially completed Mission 1!`).catch()
@@ -221,7 +223,7 @@ async function stepFour(user) {
                 } catch (e) {
                     console.log(e)
                 }
-            }, 120000)
+            }, 10000)
         }
     } catch (e) {
         console.log(e)

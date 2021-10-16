@@ -45,16 +45,21 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
     const channel = client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID).channels.cache.get('896318245127225354');
 
     let messageId;
-    if (!process.env.MISSION_ONE_MESSAGE_ID) {
-        const message = await channel.send({ embeds: [messageEmbed] })
-        await message.react(emoji)
-        messageId = message.id
-    } else {
-        messageId = process.env.MISSION_ONE_MESSAGE_ID;
-    }
+    // if (!process.env.MISSION_ONE_MESSAGE_ID) {
+    //     const message = await channel.send({ embeds: [messageEmbed] })
+    //     await message.react(emoji)
+    //     messageId = message.id
+    // } else {
+    //     messageId = process.env.MISSION_ONE_MESSAGE_ID;
+    // }
+    //
+    // console.log(messageId)
+    const message = await channel.send({ embeds: [messageEmbed] })
+    await message.react(emoji)
+    messageId = message.id
 
     client.on('messageReactionAdd', async (reaction, user) => {
-        if (reaction.emoji.id === emojiId && user.id !== process.env.DISCORD_BOT_CLIENT_ID && reaction.message.id === messageId) {
+        if (reaction.emoji.id === emojiId && user.id !== process.env.DISCORD_BOT_CLIENT_ID && reaction.message.id == messageId) {
             let missionClient;
             try {
                 let mission = 1;

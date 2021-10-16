@@ -232,6 +232,10 @@ client.on('interactionCreate', async interaction => {
                     if (interaction) {
                         await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
                     }
+                } else {
+                    if (interaction) {
+                        await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+                    }
                 }
             } else {
                 if (interaction) {
@@ -250,7 +254,7 @@ client.login(process.env.DISCORD_BOT_TOKEN)
 
 async function setupRedis() {
     if (!redisClient) {
-        redisClient = await redis.createClient(process.env.REDIS_URL, {
+        redisClient = await redis.createClient(process.env.REDIS_TLS_URL, {
             tls: {
                 rejectUnauthorized: false
             }

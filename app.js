@@ -8,8 +8,4 @@ app.get('/link-twitter', (req, res, next) => {
     callback(req, res, next)
 })
 
-if (process.env.NODE_ENV === 'production') {
-    app.listen(process.env.PORT)
-} else {
-    app.listen(process.env.PORT)
-}
+app.listen(process.env.PORT)

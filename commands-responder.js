@@ -254,7 +254,11 @@ client.login(process.env.DISCORD_BOT_TOKEN)
 
 async function setupRedis() {
     if (!redisClient) {
-        redisClient = await redis.createClient(process.env.REDIS_TLS_URL)
+        redisClient = await redis.createClient(process.env.REDIS_URL, {
+            tls: {
+                rejectUnauthorized: false
+            }
+        })
         redisClient.on("error", function (error) {
             console.error(error);
         });

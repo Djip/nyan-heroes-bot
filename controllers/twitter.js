@@ -8,7 +8,11 @@ const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_
 client.login(process.env.DISCORD_BOT_TOKEN)
 
 async function callback(req, res) {
-    const redisClient = await redis.createClient(process.env.REDIS_URL)
+    const redisClient = await redis.createClient(process.env.REDIS_URL, {
+        tls: {
+            rejectUnauthorized: false
+        }
+    })
     redisClient.on("error", function (error) {
         console.error(error);
     });

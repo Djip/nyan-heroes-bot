@@ -59,7 +59,7 @@ async function callback(req, res) {
                     id: twitterUser.id,
                     screen_name: twitterUser.screen_name,
                 }).then(async data => {
-                    res.send(`Your Twitter account has been linked successfully, please proceed to your next task.`)
+                    res.send(`Your Twitter account has been linked successfully. Be sure that you have filled out the Google form with your Solana Wallet address to enter the raffle.`)
                     // await discordUser.send(`Your Twitter account has been linked`);
                     //
                     // // Put a date/time restriciton on this

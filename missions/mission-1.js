@@ -42,7 +42,7 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
 😼 Good luck on your first mission soldier!😼
 `)
 
-    const channel = client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID).channels.cache.get('896318245127225354');
+    const channel = client.guilds.cache.get(process.env.DISCORD_NYAN_HEROES_GUILT_ID).channels.cache.get('896318360952901632');
 
     let messageId;
     // if (!process.env.MISSION_ONE_MESSAGE_ID) {
@@ -54,9 +54,9 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
     // }
     //
     // console.log(messageId)
-    const message = await channel.send({ embeds: [messageEmbed] })
-    await message.react(emoji)
-    messageId = message.id
+    // const message = await channel.send({ embeds: [messageEmbed] })
+    // await message.react(emoji)
+    // messageId = message.id
 
     client.on('messageReactionAdd', async (reaction, user) => {
         if (reaction.emoji.id === emojiId && user.id !== process.env.DISCORD_BOT_CLIENT_ID && reaction.message.id == messageId) {

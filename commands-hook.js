@@ -11,25 +11,28 @@ const everyoneRoleId = 873169142742679607;
 const teamRoleId = 878912061592190976;
 
 const commandsHook = [
+    // new SlashCommandBuilder()
+    //     .setName('rank-test')
+    //     .setDescription('Fetch current rank/level information'),
+    // new SlashCommandBuilder()
+    //     .setName('leaderboard')
+    //     .setDescription('Fetch top 10 Leaderboard'),
+    // new SlashCommandBuilder()
+    //     .setName('give-xp')
+    //     .setDescription('Fetch current rank/level information')
+    //     .addUserOption(option => option.setName('user').setDescription('The user to give xp').setRequired(true))
+    //     .addIntegerOption(option => option.setName('xp').setDescription('How much xp to give').setRequired(true)),
+    // new SlashCommandBuilder()
+    //     .setName('subtract-xp')
+    //     .setDescription('Fetch current rank/level information')
+    //     .addUserOption(option => option.setName('user').setDescription('The user to give xp').setRequired(true))
+    //     .addIntegerOption(option => option.setName('xp').setDescription('How much xp to give').setRequired(true)),
+    // new SlashCommandBuilder()
+    //     .setName('link-twitter')
+    //     .setDescription('Link your Twitter to gain XP from re-tweets'),
     new SlashCommandBuilder()
-        .setName('rank-test')
-        .setDescription('Fetch current rank/level information'),
-    new SlashCommandBuilder()
-        .setName('leaderboard')
-        .setDescription('Fetch top 10 Leaderboard'),
-    new SlashCommandBuilder()
-        .setName('give-xp')
-        .setDescription('Fetch current rank/level information')
-        .addUserOption(option => option.setName('user').setDescription('The user to give xp').setRequired(true))
-        .addIntegerOption(option => option.setName('xp').setDescription('How much xp to give').setRequired(true)),
-    new SlashCommandBuilder()
-        .setName('subtract-xp')
-        .setDescription('Fetch current rank/level information')
-        .addUserOption(option => option.setName('user').setDescription('The user to give xp').setRequired(true))
-        .addIntegerOption(option => option.setName('xp').setDescription('How much xp to give').setRequired(true)),
-    new SlashCommandBuilder()
-        .setName('link-twitter')
-        .setDescription('Link your Twitter to gain XP from re-tweets')
+        .setName('mission-1')
+        .setDescription('Link your Twitter')
 ]
     .map(command => command.toJSON());
 

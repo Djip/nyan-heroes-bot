@@ -11,26 +11,33 @@ const {TwitterApi} = require("twitter-api-v2");
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 let redisClient, getAsync;
+let api;
 
-client.on('messageCreate', async message => {
-    const messageWordCount = wordCount(message.content)
-
-    if (messageWordCount >= 5) {
-        const api = await axios.api()
-
-        await api.post(`users/give-message-xp`, {
-            user: message.author
-        }).then(response => {
-            console.log("Message XP Given")
-        }).catch(error => {
-            console.log(error)
-        })
-    }
-})
+// client.on('messageCreate', async message => {
+//     const messageWordCount = wordCount(message.content)
+//
+//     if (messageWordCount >= 5) {
+//         const api = await axios.api()
+//
+//         await api.post(`users/give-message-xp`, {
+//             user: message.author
+//         }).then(response => {
+//             console.log("Message XP Given")
+//         }).catch(error => {
+//             console.log(error)
+//         })
+//     }
+// })
 
 client.on('interactionCreate', async interaction => {
     if (!interaction.isCommand()) {
         return;
+    }
+    if (!redisClient) {
+        await setupRedis()
+    }
+    if (!api) {
+        api = await axios.api();
     }
 
     if (interaction.commandName === 'give-xp') {
@@ -184,6 +191,54 @@ client.on('interactionCreate', async interaction => {
         } catch (e) {
             if (interaction) {
                 interaction.reply("Couldn't fetch Leaderboard, try again.")
+            }
+        }
+    }
+
+    if (interaction.commandName === 'mission-1') {
+        try {
+            await interaction.deferReply({ephemeral: true})
+            let mission = 1
+            await api.get('missions/1', {
+                params: {
+                    discord_id: interaction.member.user.id,
+                    username: interaction.member.user.username,
+                    discriminator: interaction.member.user.discriminator,
+                    avatar: interaction.member.user.avatar
+                }
+            }).then(response => {
+                mission = response.data.status
+            }).catch(async error => {
+                if (interaction) {
+                    await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+                }
+            })
+
+            if (mission === 1) {
+                const twitterClient = new TwitterApi({
+                    appKey: process.env.TWITTER_API_KEY,
+                    appSecret: process.env.TWITTER_API_KEY_SECRET
+                })
+                const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + interaction.member.user.id
+                const authLink = await twitterClient.generateAuthLink(callbackUrl)
+                if (redisClient) {
+                    redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
+                        oauth_token: authLink.oauth_token,
+                        oauth_token_secret: authLink.oauth_token_secret
+                    }))
+
+                    if (interaction) {
+                        await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
+                    }
+                }
+            } else {
+                if (interaction) {
+                    await interaction.editReply({ content: "You have already linked your Twitter.", ephemeral: true})
+                }
+            }
+        } catch (e) {
+            if (interaction) {
+                await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
             }
         }
     }

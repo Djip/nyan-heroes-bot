@@ -1,2 +1,2 @@
 web: npm run app
-web: node missions/mission-1.js
+worker: node missions/mission-1.js

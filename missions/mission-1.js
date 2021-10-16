@@ -207,23 +207,7 @@ async function stepFour(user) {
             await completeMission(api, user, 1)
             await user.send(`You have officially completed Mission 1!`)
         } else {
-            await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. We will automatically check again in 2 minutes from now.`)
-            setTimeout( async () => {
-                try {
-                    let guild = await client.guilds.fetch(process.env.DISCORD_NYAN_HEROES_GUILT_ID)
-                    await guild.members.fetch({ user: user.id, force: true}).then(response => {
-                        fetchedUser = response
-                    })
-                    if (fetchedUser.nickname.match(/Nyan/gi)) {
-                        await completeMission(api, user, 1)
-                        await user.send(`You have officially completed Mission 1!`).catch()
-                    } else {
-                        await user.send(`Remember to change your nickname to include "Nyan" in order to fully complete mission 1. Please re-react to the message in the #mission-1 channel to complete Mission 1, when you have changed your nickname.`).catch()
-                    }
-                } catch (e) {
-                    console.log(e)
-                }
-            }, 10000)
+            await user.send(`Next make sure you follow the Nyan Heroes Twitter Account and then change your discord nickname to include the word "Nyan"\nOnce all tasks have been completed, please re-react to the emote in #mission-1 channel`)
         }
     } catch (e) {
         console.log(e)

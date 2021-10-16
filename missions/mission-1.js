@@ -114,6 +114,8 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
 })
 
 client.login(process.env.DISCORD_BOT_TOKEN).then().catch(error => {
+    console.log("Discord Client Login Error")
+    console.log(process.env.DISCORD_BOT_TOKEN)
     console.log(error)
 })
 

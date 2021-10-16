@@ -50,7 +50,7 @@ Up to 1000 of you trainees will win a whitelist spot to mint a Genesis NYAN.
         await message.react(emoji)
         messageId = message.id
     } else {
-        messageId = process.env.MISSION_TWO_MESSAGE_ID;
+        messageId = process.env.MISSION_ONE_MESSAGE_ID;
     }
 
     client.on('messageReactionAdd', async (reaction, user) => {

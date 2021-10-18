@@ -160,6 +160,9 @@ async function missionTwo(req, res) {
                             await completeMission(api, discordUser, 2);
                             await res.send(`You have officially completed Mission 2!`)
                         }
+                    }).catch(error => {
+                        console.log("Timeline error")
+                        console.log(error)
                     })
 
                     redisClient.quit()

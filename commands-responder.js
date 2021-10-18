@@ -285,7 +285,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'mission-2') {
+    if (interaction.commandName === 'mission2') {
         if (!redisClient) {
             await setupRedis();
         }

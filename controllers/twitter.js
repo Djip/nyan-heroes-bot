@@ -102,7 +102,7 @@ async function missionTwo(req, res) {
     const { oauth_verifier } = req.query
 
     if (!credentials) {
-        res.send(`This link as already been used, please request a new one.`)
+        res.send(`This link has already been used, please request a new one.`)
         redisClient.quit()
     } else if (!credentials.oauth_token || !oauth_verifier || !credentials.oauth_token_secret) {
         redisClient.quit()
@@ -127,57 +127,68 @@ async function missionTwo(req, res) {
         })
 
         await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
-            await loggedClient.currentUser().then(async  twitterUser => {
+            await loggedClient.currentUser().then(async twitterUser => {
                 const api = await axios.api()
-                await api.post('twitter/information', {
-                    user: discordUser,
-                    access_token: accessToken,
-                    access_secret: accessSecret,
-                    id: twitterUser.id,
-                    screen_name: twitterUser.screen_name,
-                }).then(async data => {
-                    await loggedClient.v2.userTimeline(twitterUser.id, {'expansions': 'referenced_tweets.id', 'tweet.fields': ['id', 'created_at']}).then(async tweetResponse => {
-                        let retweeted = false;
-                        let commented = false;
-                        await tweetResponse.fetchNext(50).then(response => {
-                            console.log("Fetched more results")
-                            console.log(response)
-                        }).catch(error => {
-                            console.log("Couldn't fetch more tweets")
-                            console.log(error)
-                        })
+                await loggedClient.v2.userByUsername(twitterUser.screen_name).then(async response => {
+                    const twitterUserId = response.data.id
 
-                        for (const tweet of tweetResponse.tweets) {
-                            if (tweet.referenced_tweets) {
-                                console.log(tweet)
-                                if (tweet.referenced_tweets[0].id == process.env.MISSION_TWO_TWEET_ID) {
-                                    if (tweet.referenced_tweets[0].type === 'retweeted' || tweet.referenced_tweets[0].type === 'quoted') {
-                                        retweeted = true;
-                                        console.log('retweeted')
-                                    }
-                                    let tagCount = tweet.text.match(/@/g);
-                                    if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
-                                        commented = true;
-                                        console.log('commented')
+                    await api.post('twitter/information', {
+                        user: discordUser,
+                        access_token: accessToken,
+                        access_secret: accessSecret,
+                        id: twitterUserId,
+                        screen_name: twitterUser.screen_name,
+                    }).then(async data => {
+                        await loggedClient.v2.userTimeline(twitterUserId, {
+                            'expansions': 'referenced_tweets.id',
+                            'tweet.fields': ['id', 'created_at']
+                        }).then(async tweetResponse => {
+                            let retweeted = false;
+                            let commented = false;
+                            await tweetResponse.fetchNext(50).then(response => {
+                                console.log("Fetched more results")
+                                console.log(response)
+                            }).catch(error => {
+                                console.log("Couldn't fetch more tweets")
+                                console.log(error)
+                            })
+
+                            for (const tweet of tweetResponse.tweets) {
+                                if (tweet.referenced_tweets) {
+                                    console.log(tweet)
+                                    if (tweet.referenced_tweets[0].id == process.env.MISSION_TWO_TWEET_ID) {
+                                        if (tweet.referenced_tweets[0].type === 'retweeted' || tweet.referenced_tweets[0].type === 'quoted') {
+                                            retweeted = true;
+                                            console.log('retweeted')
+                                        }
+                                        let tagCount = tweet.text.match(/@/g);
+                                        if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
+                                            commented = true;
+                                            console.log('commented')
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        if (!retweeted) {
-                            await res.send(`In order to complete this mission, retweet the post.`)
-                        } else if (!commented) {
-                            await res.send(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
-                        } else {
-                            await completeMission(api, discordUser, 2);
-                            await res.send(`You have officially completed Mission 2!`)
-                        }
+                            if (!retweeted) {
+                                await res.send(`In order to complete this mission, retweet the post.`)
+                            } else if (!commented) {
+                                await res.send(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
+                            } else {
+                                await completeMission(api, discordUser, 2);
+                                await res.send(`You have officially completed Mission 2!`)
+                            }
+                        }).catch(error => {
+                            console.log("Timeline error")
+                            console.log(error)
+                        })
+
+                        redisClient.quit()
                     }).catch(error => {
-                        console.log("Timeline error")
                         console.log(error)
+                        res.send(`Something went wrong linking your Twitter account, please try again.`)
+                        redisClient.quit()
                     })
-
-                    redisClient.quit()
                 }).catch(error => {
                     console.log(error)
                     res.send(`Something went wrong linking your Twitter account, please try again.`)

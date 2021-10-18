@@ -193,7 +193,7 @@ async function missionTwo(req, res) {
                         let retweeted = false;
                         let commented = false;
                         for (const tweet of tweetResponse.tweets) {
-                            if (tweet.created_at > '2021-10-18 19:00:00') {
+                            if (tweet.created_at > '2021-10-18 20:00:00') {
                                 if (tweet.text.match(/RT @nyanheroes/gi)) {
                                     retweeted = true;
                                 }

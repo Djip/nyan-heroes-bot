@@ -260,10 +260,10 @@ client.on('interactionCreate', async interaction => {
                 appKey: process.env.TWITTER_API_KEY,
                 appSecret: process.env.TWITTER_API_KEY_SECRET
             })
-            const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + msg.author.id
+            const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + interaction.member.user.id
             const authLink = await twitterClient.generateAuthLink(callbackUrl)
             if (redisClient) {
-                redisClient.set('twitter-auth-' + msg.author.id, JSON.stringify({
+                redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
                     oauth_token: authLink.oauth_token,
                     oauth_token_secret: authLink.oauth_token_secret
                 }), function(error) {
@@ -296,7 +296,6 @@ client.on('messageCreate', async msg => {
         api = await axios.api();
     }
 
-    // Check if the message starts with '!hello' and respond with 'world!' if it does.
     if(msg.content.startsWith("!mission2")) {
         try {
             let done = false;

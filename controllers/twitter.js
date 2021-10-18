@@ -136,64 +136,12 @@ async function missionTwo(req, res) {
                     id: twitterUser.id,
                     screen_name: twitterUser.screen_name,
                 }).then(async data => {
-                    // await loggedClient.v2.userLikedTweets(twitterUser.id).then(async tweetResponse => {
-                    //     const likes = tweetResponse.tweets;
-                    //     let liked = false;
-                    //     for (const like of likes) {
-                    //         if (like.id === process.env.MISSION_TWO_TWEET_ID) {
-                    //             liked = true;
-                    //         }
-                    //     }
-                    //
-                    //     if (liked) {
-                    //         let retweeted = false;
-                    //         const users = await loggedClient.v2.tweetRetweetedBy(process.env.MISSION_TWO_TWEET_ID);
-                    //
-                    //         users.data.forEach(user => {
-                    //             if (user.username === response.data.screen_name) {
-                    //                 retweeted = true
-                    //             }
-                    //         })
-                    //
-                    //         if (retweeted) {
-                    //             await loggedClient.v2.userTimeline(twitterUser.id).then(async tweetResponse => {
-                    //                 let commented = false;
-                    //                 for (const tweet of tweetResponse.tweets) {
-                    //                     if (tweet.text.match(/RT @nyanheroes/gi)) {
-                    //                         retweeted = true;
-                    //                     }
-                    //                     let tagCount = tweet.text.match(/@/g);
-                    //                     if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
-                    //                         commented = true;
-                    //                     }
-                    //                 }
-                    //
-                    //                 if (!commented) {
-                    //                     await msg.reply(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
-                    //                 } else {
-                    //                     await completeMission(api, msg.author, 2);
-                    //                     res.send(`You have officially completed Mission 2!`)
-                    //                 }
-                    //             }).catch(async error => {
-                    //                 console.log(error)
-                    //                 res.send(`Something went wrong trying to check Mission 2, please try to re-react to the message. Remember you have to have completed Mission 1 to complete mission 2.`)
-                    //             })
-                    //         } else {
-                    //             res.send(`In order to complete this mission, you have to Retweet the post.`)
-                    //         }
-                    //     } else {
-                    //         res.send(`In order to complete this mission, you have to Like the post.`)
-                    //     }
-                    // }).catch(async error => {
-                    //     console.log(error)
-                    //     res.send(`Please try again in 15 minutes.`)
-                    // })
-
                     await loggedClient.v2.userTimeline(twitterUser.id, {'tweet.fields': ['id', 'created_at']}).then(async tweetResponse => {
                         let retweeted = false;
                         let commented = false;
                         for (const tweet of tweetResponse.tweets) {
-                            if (tweet.created_at > '2021-10-18 20:00:00') {
+                            if (tweet.created_at > '2021-10-18T18:00:00.000Z') {
+                                console.log(tweet)
                                 if (tweet.text.match(/RT @nyanheroes/gi)) {
                                     retweeted = true;
                                 }

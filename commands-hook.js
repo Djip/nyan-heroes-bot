@@ -32,6 +32,9 @@ const commandsHook = [
     //     .setDescription('Link your Twitter to gain XP from re-tweets'),
     new SlashCommandBuilder()
         .setName('mission-1')
+        .setDescription('Link your Twitter'),
+    new SlashCommandBuilder()
+        .setName('twitter')
         .setDescription('Link your Twitter')
 ]
     .map(command => command.toJSON());

@@ -321,15 +321,15 @@ client.on('messageCreate', async msg => {
                                 }
                             })
 
-                            while (!retweeted && !allTweetsRead) {
-                                const newUsers = await users.next();
-
-                                newUsers.data.forEach(user => {
-                                    if (user.username === response.data.screen_name) {
-                                        retweeted = true
-                                    }
-                                })
-                            }
+                            // while (!retweeted && !allTweetsRead) {
+                            //     const newUsers = await users.tweets.next();
+                            //
+                            //     newUsers.data.forEach(user => {
+                            //         if (user.username === response.data.screen_name) {
+                            //             retweeted = true
+                            //         }
+                            //     })
+                            // }
 
                             if (retweeted) {
                                 await appClient.v2.userTimeline(response.data.twitter_id).then(async tweetResponse => {
@@ -347,7 +347,7 @@ client.on('messageCreate', async msg => {
                                     if (!commented) {
                                         await msg.reply(`In order to complete this mission, you have to reply under the post and tag 3 Key Opinion Leader's in the NFT community with over 5K followers, as well as use the #nyanarmy.`)
                                     } else {
-                                        // await completeMission(api, msg.author, 2);
+                                        await completeMission(api, msg.author, 2);
                                         await msg.reply(`You have officially completed Mission 2!`)
                                     }
                                 }).catch(async error => {
@@ -362,7 +362,7 @@ client.on('messageCreate', async msg => {
                         }
                     }).catch(async error => {
                         console.log(error)
-                        await msg.reply(`Something went wrong trying to check Mission 2, please try to re-react to the message. Remember you have to have completed Mission 1 to complete mission 2.`)
+                        await msg.reply(`Please re-link your twitter using **/twitter**.`)
                     })
                 }).catch(async error => {
                     console.log(error)

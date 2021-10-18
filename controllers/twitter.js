@@ -176,7 +176,7 @@ async function missionTwo(req, res) {
                                 await res.send(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
                             } else {
                                 await completeMission(api, discordUser, 2);
-                                await res.send(`You have officially completed Mission 2!`)
+                                await res.send(`You have officially completed Mission 2!<br />ATTENTION!!!! If you have NOT completed mission 1, please fill out this form with your Solana Wallet Address: <a href="https://forms.gle/JaCMQindiRXMNYZt7">https://forms.gle/JaCMQindiRXMNYZt7</a>.`)
                             }
                         }).catch(error => {
                             console.log("Timeline error")

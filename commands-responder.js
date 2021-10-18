@@ -250,33 +250,33 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    // if (interaction.commandName === 'twitter') {
-    //     if (!redisClient) {
-    //         await setupRedis();
-    //     }
-    //     try {
-    //         const twitterClient = new TwitterApi({
-    //             appKey: process.env.TWITTER_API_KEY,
-    //             appSecret: process.env.TWITTER_API_KEY_SECRET
-    //         })
-    //         const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + msg.author.id
-    //         const authLink = await twitterClient.generateAuthLink(callbackUrl)
-    //         if (redisClient) {
-    //             redisClient.set('twitter-auth-' + msg.author.id, JSON.stringify({
-    //                 oauth_token: authLink.oauth_token,
-    //                 oauth_token_secret: authLink.oauth_token_secret
-    //             }), function(error) {
-    //                 console.log(error)
-    //             })
-    //
-    //             await msg.reply(`Please use the following URL to link your Twitter account: ${authLink.url}`)
-    //         } else {
-    //             await msg.reply("Something went wrong linking your Twitter account.")
-    //         }
-    //     } catch (e) {
-    //         await msg.reply("Something went wrong linking your Twitter account.")
-    //     }
-    // }
+    if (interaction.commandName === 'twitter') {
+        if (!redisClient) {
+            await setupRedis();
+        }
+        try {
+            const twitterClient = new TwitterApi({
+                appKey: process.env.TWITTER_API_KEY,
+                appSecret: process.env.TWITTER_API_KEY_SECRET
+            })
+            const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + msg.author.id
+            const authLink = await twitterClient.generateAuthLink(callbackUrl)
+            if (redisClient) {
+                redisClient.set('twitter-auth-' + msg.author.id, JSON.stringify({
+                    oauth_token: authLink.oauth_token,
+                    oauth_token_secret: authLink.oauth_token_secret
+                }), function(error) {
+                    console.log(error)
+                })
+
+                await msg.reply(`Please use the following URL to link your Twitter account: ${authLink.url}`)
+            } else {
+                await msg.reply("Something went wrong linking your Twitter account.")
+            }
+        } catch (e) {
+            await msg.reply("Something went wrong linking your Twitter account.")
+        }
+    }
 })
 
 client.on('messageCreate', async msg => {

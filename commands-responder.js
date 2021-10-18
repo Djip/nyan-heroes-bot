@@ -249,6 +249,60 @@ client.on('interactionCreate', async interaction => {
             }
         }
     }
+
+    if (interaction.commandName === 'twitter') {
+        try {
+            await interaction.deferReply({ephemeral: true})
+            let mission = 1
+            await api.get('missions/1', {
+                params: {
+                    discord_id: interaction.member.user.id,
+                    username: interaction.member.user.username,
+                    discriminator: interaction.member.user.discriminator,
+                    avatar: interaction.member.user.avatar
+                }
+            }).then(response => {
+                mission = response.data.status
+            }).catch(async error => {
+                if (interaction) {
+                    await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+                }
+            })
+
+            if (mission === 1) {
+                const twitterClient = new TwitterApi({
+                    appKey: process.env.TWITTER_API_KEY,
+                    appSecret: process.env.TWITTER_API_KEY_SECRET
+                })
+                const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + interaction.member.user.id
+                const authLink = await twitterClient.generateAuthLink(callbackUrl)
+                if (redisClient) {
+                    redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
+                        oauth_token: authLink.oauth_token,
+                        oauth_token_secret: authLink.oauth_token_secret
+                    }), function(error) {
+                        console.log(error)
+                    })
+
+                    if (interaction) {
+                        await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
+                    }
+                } else {
+                    if (interaction) {
+                        await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+                    }
+                }
+            } else {
+                if (interaction) {
+                    await interaction.editReply({ content: "You have already linked your Twitter.", ephemeral: true})
+                }
+            }
+        } catch (e) {
+            if (interaction) {
+                await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+            }
+        }
+    }
 })
 
 client.on('messageCreate', async msg => {
@@ -312,7 +366,6 @@ client.on('messageCreate', async msg => {
 
                         if (liked) {
                             let retweeted = false;
-                            let allTweetsRead = false;
                             const users = await appClient.v2.tweetRetweetedBy(process.env.MISSION_TWO_TWEET_ID);
 
                             users.data.forEach(user => {
@@ -320,16 +373,6 @@ client.on('messageCreate', async msg => {
                                     retweeted = true
                                 }
                             })
-
-                            // while (!retweeted && !allTweetsRead) {
-                            //     const newUsers = await users.tweets.next();
-                            //
-                            //     newUsers.data.forEach(user => {
-                            //         if (user.username === response.data.screen_name) {
-                            //             retweeted = true
-                            //         }
-                            //     })
-                            // }
 
                             if (retweeted) {
                                 await appClient.v2.userTimeline(response.data.twitter_id).then(async tweetResponse => {
@@ -366,7 +409,7 @@ client.on('messageCreate', async msg => {
                     })
                 }).catch(async error => {
                     console.log(error)
-                    await msg.reply(`Something went wrong trying to check Mission 2, please try to re-react to the message.`)
+                    await msg.reply(`Please re-link your twitter using **/twitter**.`)
                 })
             } else {
                 await msg.reply(`You have officially completed Mission 2!`)

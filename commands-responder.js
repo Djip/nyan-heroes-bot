@@ -8,6 +8,7 @@ const font2base64 = require('node-font2base64')
 const redis = require('redis')
 const { promisify } = require('util')
 const {TwitterApi} = require("twitter-api-v2");
+const { completeMission } = require("./util")
 
 const client = new Client({ intents: [Intents.FLAGS.GUILDS, Intents.FLAGS.GUILD_MESSAGES] });
 let redisClient, getAsync;
@@ -164,7 +165,7 @@ client.on('interactionCreate', async interaction => {
             const authLink = await twitterClient.generateAuthLink(callbackUrl)
             redisClient.set('twitter-auth-' + user.id, JSON.stringify({oauth_token: authLink.oauth_token, oauth_token_secret: authLink.oauth_token_secret}))
 
-            user.send(`Please use the following URL to link your Twitter account: ${authLink.url}`);
+            msg.reply(`Please use the following URL to link your Twitter account: ${authLink.url}`);
             interaction.reply({ content: 'Please look in your DM.', ephemeral: true })
         } catch (e) {
             console.log(e)
@@ -246,6 +247,160 @@ client.on('interactionCreate', async interaction => {
             if (interaction) {
                 await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
             }
+        }
+    }
+})
+
+client.on('messageCreate', async msg => {
+    // This block will prevent the bot from responding to itself and other bots
+    if(msg.author.bot) {
+        return
+    }
+
+    if (!api) {
+        api = await axios.api();
+    }
+
+    // Check if the message starts with '!hello' and respond with 'world!' if it does.
+    if(msg.content.startsWith("!mission2")) {
+        try {
+            let done = false;
+            await api.get('missions/2', {
+                params: {
+                    discord_id: msg.author.id,
+                    username: msg.author.username,
+                    discriminator: msg.author.discriminator,
+                    avatar: msg.author.avatar
+                }
+            }).then(response => {
+                if (response.data.success) {
+                    done = true;
+                }
+            }).catch(error => {
+                console.log(error)
+            })
+
+            if (!done) {
+                await api.get('twitter/information/current', {
+                    params: {
+                        discord_id: msg.author.id,
+                        username: msg.author.username,
+                        discriminator: msg.author.discriminator,
+                        avatar: msg.author.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.success === false) {
+                        await msg.reply("Please link your twitter first with the **/twitter** command.")
+                        return;
+                    }
+
+                    const twitterClient = new TwitterApi({
+                        appKey: process.env.TWITTER_API_KEY,
+                        appSecret: process.env.TWITTER_API_KEY_SECRET,
+                        accessToken: response.data.accessToken,
+                        accessSecret: response.data.accessSecret
+                    })
+                    const appClient = await twitterClient.appLogin()
+                    await appClient.v2.userLikedTweets(response.data.twitter_id).then(async tweetResponse => {
+                        const likes = tweetResponse.tweets;
+                        let liked = false;
+                        for (const like of likes) {
+                            if (like.id === process.env.MISSION_TWO_TWITTER_ID) {
+                                liked = true;
+                            }
+                        }
+
+                        if (liked) {
+                            let retweeted = false;
+                            let allTweetsRead = false;
+                            const users = await appClient.v2.tweetRetweetedBy(process.env.MISSION_TWO_TWITTER_ID);
+
+                            users.data.forEach(user => {
+                                if (user.username === response.data.screen_name) {
+                                    retweeted = true
+                                }
+                            })
+
+                            while (!retweeted && !allTweetsRead) {
+                                const newUsers = await users.next();
+
+                                newUsers.data.forEach(user => {
+                                    if (user.username === response.data.screen_name) {
+                                        retweeted = true
+                                    }
+                                })
+                            }
+
+                            if (retweeted) {
+                                await appClient.v2.userTimeline(response.data.twitter_id).then(async tweetResponse => {
+                                    let commented = false;
+                                    for (const tweet of tweetResponse.tweets) {
+                                        if (tweet.text.match(/RT @nyanheroes/gi)) {
+                                            retweeted = true;
+                                        }
+                                        let tagCount = tweet.text.match(/@/g);
+                                        if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
+                                            commented = true;
+                                        }
+                                    }
+
+                                    if (!commented) {
+                                        await msg.reply(`In order to complete this mission, you have to reply under the post and tag 3 Key Opinion Leader's in the NFT community with over 5K followers, as well as use the #nyanarmy.`)
+                                    } else {
+                                        // await completeMission(api, msg.author, 2);
+                                        await msg.reply(`You have officially completed Mission 2!`)
+                                    }
+                                }).catch(async error => {
+                                    console.log(error)
+                                    await msg.reply(`Something went wrong trying to check Mission 2, please try to re-react to the message. Remember you have to have completed Mission 1 to complete mission 2.`)
+                                })
+                            } else {
+                                await msg.reply(`In order to complete this mission, you have to Retweet the post.`)
+                            }
+                        } else {
+                            await msg.reply(`In order to complete this mission, you have to Like the post.`)
+                        }
+                    }).catch(async error => {
+                        console.log(error)
+                        await msg.reply(`Something went wrong trying to check Mission 2, please try to re-react to the message. Remember you have to have completed Mission 1 to complete mission 2.`)
+                    })
+                }).catch(async error => {
+                    console.log(error)
+                    await msg.reply(`Something went wrong trying to check Mission 2, please try to re-react to the message.`)
+                })
+            } else {
+                await msg.reply(`You have officially completed Mission 2!`)
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+
+    if (msg.content.startsWith("!twitter")) {
+        if (!redisClient) {
+            await setupRedis();
+        }
+        try {
+            const twitterClient = new TwitterApi({
+                appKey: process.env.TWITTER_API_KEY,
+                appSecret: process.env.TWITTER_API_KEY_SECRET
+            })
+            const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + msg.author.id
+            const authLink = await twitterClient.generateAuthLink(callbackUrl)
+            if (redisClient) {
+                redisClient.set('twitter-auth-' + msg.author.id, JSON.stringify({
+                    oauth_token: authLink.oauth_token,
+                    oauth_token_secret: authLink.oauth_token_secret
+                }), function(error) {
+                    console.log(error)
+                })
+
+                await msg.reply(`Please use the following URL to link your Twitter account: ${authLink.url}`)
+            } else {
+                await msg.reply("Something went wrong linking your Twitter account.")
+            }
+        } catch (e) {
+            await msg.reply("Something went wrong linking your Twitter account.")
         }
     }
 })

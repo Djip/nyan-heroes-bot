@@ -25,7 +25,7 @@ async function callback(req, res) {
     const { oauth_verifier } = req.query
 
     if (!credentials) {
-        res.send(`Your Twitter account has been linked successfully, please proceed to your next task.`)
+        res.send(`Your Twitter account has been linked successfully.`)
         redisClient.quit()
     } else if (!credentials.oauth_token || !oauth_verifier || !credentials.oauth_token_secret) {
         redisClient.quit()
@@ -70,7 +70,7 @@ async function callback(req, res) {
                     // await checkTweets(loggedClient, twitterUser, discordUser)
                 }).catch(error => {
                     console.log(error)
-                    res.send(`Something went wrong linking your Twitter account, please use the command /mission-1 again.`)
+                    res.send(`Something went wrong linking your Twitter account, please try again.`)
                     redisClient.quit()
                     // console.log(error)
                     // closeWindow(res)
@@ -78,7 +78,7 @@ async function callback(req, res) {
                 })
             }).catch(error => {
                 console.log(error)
-                res.send(`Something went wrong linking your Twitter account, please use the command /mission-1 again.`)
+                res.send(`Something went wrong linking your Twitter account, please try again.`)
                 redisClient.quit()
                 // console.log(error)
                 // closeWindow(res)
@@ -86,7 +86,7 @@ async function callback(req, res) {
             })
         }).catch(error => {
             console.log(error)
-            res.send(`Something went wrong linking your Twitter account, please use the command /mission-1 again.`)
+            res.send(`Something went wrong linking your Twitter account, please try again.`)
             redisClient.quit()
             // console.log(error)
             // closeWindow(res)

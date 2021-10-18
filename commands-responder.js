@@ -306,7 +306,7 @@ client.on('interactionCreate', async interaction => {
                 })
 
                 if (interaction) {
-                    await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
+                    await interaction.editReply({ content: `Please use the following URL to check if you have completed Mission 2: ${authLink.url}`, ephemeral: true})
                 }
             } else {
                 if (interaction) {
@@ -454,7 +454,7 @@ client.on('messageCreate', async msg => {
                     console.log(error)
                 })
 
-                await msg.reply(`Please use the following URL to link your Twitter account: ${authLink.url}`)
+                await msg.reply(`Please use the following URL to check if you have completed Mission 2: ${authLink.url}`)
             } else {
                 await msg.reply("Something went wrong linking your Twitter account.")
             }

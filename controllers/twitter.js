@@ -139,7 +139,13 @@ async function missionTwo(req, res) {
                     await loggedClient.v2.userTimeline(twitterUser.id, {'expansions': 'referenced_tweets.id', 'tweet.fields': ['id', 'created_at']}).then(async tweetResponse => {
                         let retweeted = false;
                         let commented = false;
-                        await tweetResponse.fetchNext(50)
+                        await tweetResponse.fetchNext(50).then(response => {
+                            console.log("Fetched more results")
+                            console.log(response)
+                        }).catch(error => {
+                            console.log("Couldn't fetch more tweets")
+                            console.log(error)
+                        })
 
                         for (const tweet of tweetResponse.tweets) {
                             if (tweet.referenced_tweets) {

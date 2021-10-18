@@ -345,7 +345,7 @@ client.on('messageCreate', async msg => {
                                     }
 
                                     if (!commented) {
-                                        await msg.reply(`In order to complete this mission, you have to reply under the post and tag 3 Key Opinion Leader's in the NFT community with over 5K followers, as well as use the #nyanarmy.`)
+                                        await msg.reply(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
                                     } else {
                                         await completeMission(api, msg.author, 2);
                                         await msg.reply(`You have officially completed Mission 2!`)

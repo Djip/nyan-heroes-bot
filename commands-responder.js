@@ -305,7 +305,7 @@ client.on('messageCreate', async msg => {
                         const likes = tweetResponse.tweets;
                         let liked = false;
                         for (const like of likes) {
-                            if (like.id === process.env.MISSION_TWO_TWITTER_ID) {
+                            if (like.id === process.env.MISSION_TWO_TWEET_ID) {
                                 liked = true;
                             }
                         }
@@ -313,7 +313,7 @@ client.on('messageCreate', async msg => {
                         if (liked) {
                             let retweeted = false;
                             let allTweetsRead = false;
-                            const users = await appClient.v2.tweetRetweetedBy(process.env.MISSION_TWO_TWITTER_ID);
+                            const users = await appClient.v2.tweetRetweetedBy(process.env.MISSION_TWO_TWEET_ID);
 
                             users.data.forEach(user => {
                                 if (user.username === response.data.screen_name) {

@@ -290,7 +290,7 @@ client.on('messageCreate', async msg => {
     }
 
     // Check if the message starts with '!hello' and respond with 'world!' if it does.
-    if(msg.content.startsWith("!mission3")) {
+    if(msg.content.startsWith("!mission2")) {
         try {
             let done = false;
             await api.get('missions/2', {

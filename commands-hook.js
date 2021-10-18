@@ -34,6 +34,9 @@ const commandsHook = [
         .setName('mission-1')
         .setDescription('Link your Twitter'),
     new SlashCommandBuilder()
+        .setName('mission-2')
+        .setDescription('Check if you have completed Mission 2'),
+    new SlashCommandBuilder()
         .setName('twitter')
         .setDescription('Link your Twitter')
 ]

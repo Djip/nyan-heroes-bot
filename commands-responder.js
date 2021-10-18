@@ -284,6 +284,41 @@ client.on('interactionCreate', async interaction => {
             }
         }
     }
+
+    if (interaction.commandName === 'mission-2') {
+        if (!redisClient) {
+            await setupRedis();
+        }
+        try {
+            await interaction.deferReply({ephemeral: true})
+            const twitterClient = new TwitterApi({
+                appKey: process.env.TWITTER_API_KEY,
+                appSecret: process.env.TWITTER_API_KEY_SECRET
+            })
+            const callbackUrl = process.env.TWITTER_MISSION_TWO + '?discord_id=' + interaction.member.user.id
+            const authLink = await twitterClient.generateAuthLink(callbackUrl)
+            if (redisClient) {
+                redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
+                    oauth_token: authLink.oauth_token,
+                    oauth_token_secret: authLink.oauth_token_secret
+                }), function(error) {
+                    console.log(error)
+                })
+
+                if (interaction) {
+                    await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
+                }
+            } else {
+                if (interaction) {
+                    await interaction.editReply({ content: `Something went wrong linking your Twitter account`, ephemeral: true})
+                }
+            }
+        } catch (e) {
+            if (interaction) {
+                await interaction.editReply({ content: `Something went wrong linking your Twitter account`, ephemeral: true})
+            }
+        }
+    }
 })
 
 client.on('messageCreate', async msg => {
@@ -399,7 +434,7 @@ client.on('messageCreate', async msg => {
         }
     }
 
-    if (msg.content.startsWith("!test")) {
+    if (msg.content.startsWith("!mission-2-help")) {
         if (!redisClient) {
             await setupRedis();
         }

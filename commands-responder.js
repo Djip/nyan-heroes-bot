@@ -255,6 +255,7 @@ client.on('interactionCreate', async interaction => {
             await setupRedis();
         }
         try {
+            await interaction.deferReply({ephemeral: true})
             const twitterClient = new TwitterApi({
                 appKey: process.env.TWITTER_API_KEY,
                 appSecret: process.env.TWITTER_API_KEY_SECRET
@@ -269,12 +270,18 @@ client.on('interactionCreate', async interaction => {
                     console.log(error)
                 })
 
-                await msg.reply(`Please use the following URL to link your Twitter account: ${authLink.url}`)
+                if (interaction) {
+                    await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
+                }
             } else {
-                await msg.reply("Something went wrong linking your Twitter account.")
+                if (interaction) {
+                    await interaction.editReply({ content: "Something went wrong linking your Twitter account.", ephemeral: true})
+                }
             }
         } catch (e) {
-            await msg.reply("Something went wrong linking your Twitter account.")
+            if (interaction) {
+                await interaction.editReply({ content: "Something went wrong linking your Twitter account.", ephemeral: true})
+            }
         }
     }
 })

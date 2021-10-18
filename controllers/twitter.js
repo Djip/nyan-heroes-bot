@@ -102,7 +102,7 @@ async function missionTwo(req, res) {
     const { oauth_verifier } = req.query
 
     if (!credentials) {
-        res.send(`Your Twitter account has been linked successfully.`)
+        res.send(`This link as already been used, please request a new one.`)
         redisClient.quit()
     } else if (!credentials.oauth_token || !oauth_verifier || !credentials.oauth_token_secret) {
         redisClient.quit()
@@ -136,18 +136,24 @@ async function missionTwo(req, res) {
                     id: twitterUser.id,
                     screen_name: twitterUser.screen_name,
                 }).then(async data => {
-                    await loggedClient.v2.userTimeline(twitterUser.id, {'tweet.fields': ['id', 'created_at']}).then(async tweetResponse => {
+                    await loggedClient.v2.userTimeline(twitterUser.id, {'expansions': 'referenced_tweets.id', 'tweet.fields': ['id', 'created_at']}).then(async tweetResponse => {
                         let retweeted = false;
                         let commented = false;
+                        await tweetResponse.fetchNext(50)
+
                         for (const tweet of tweetResponse.tweets) {
-                            if (tweet.created_at > '2021-10-18T18:00:00.000Z') {
+                            if (tweet.referenced_tweets) {
                                 console.log(tweet)
-                                if (tweet.text.match(/RT @nyanheroes/gi)) {
-                                    retweeted = true;
-                                }
-                                let tagCount = tweet.text.match(/@/g);
-                                if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
-                                    commented = true;
+                                if (tweet.referenced_tweets[0].id == process.env.MISSION_TWO_TWEET_ID) {
+                                    if (tweet.referenced_tweets[0].type === 'retweeted' || tweet.referenced_tweets[0].type === 'quoted') {
+                                        retweeted = true;
+                                        console.log('retweeted')
+                                    }
+                                    let tagCount = tweet.text.match(/@/g);
+                                    if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
+                                        commented = true;
+                                        console.log('commented')
+                                    }
                                 }
                             }
                         }

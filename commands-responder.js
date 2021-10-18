@@ -332,106 +332,107 @@ client.on('messageCreate', async msg => {
     }
 
     if(msg.content.startsWith("!mission2")) {
-        try {
-            let done = false;
-            await api.get('missions/2', {
-                params: {
-                    discord_id: msg.author.id,
-                    username: msg.author.username,
-                    discriminator: msg.author.discriminator,
-                    avatar: msg.author.avatar
-                }
-            }).then(response => {
-                if (response.data.success) {
-                    done = true;
-                }
-            }).catch(error => {
-                console.log(error)
-            })
-
-            if (!done) {
-                await api.get('twitter/information/current', {
-                    params: {
-                        discord_id: msg.author.id,
-                        username: msg.author.username,
-                        discriminator: msg.author.discriminator,
-                        avatar: msg.author.avatar
-                    }
-                }).then(async response => {
-                    if (response.data.success === false) {
-                        await msg.reply("Please link your twitter first with the **/twitter** command.")
-                        return;
-                    }
-
-                    const twitterClient = new TwitterApi({
-                        appKey: process.env.TWITTER_API_KEY,
-                        appSecret: process.env.TWITTER_API_KEY_SECRET,
-                        accessToken: response.data.accessToken,
-                        accessSecret: response.data.accessSecret
-                    })
-                    const appClient = await twitterClient.appLogin()
-                    await appClient.v2.userLikedTweets(response.data.twitter_id).then(async tweetResponse => {
-                        const likes = tweetResponse.tweets;
-                        let liked = false;
-                        for (const like of likes) {
-                            if (like.id === process.env.MISSION_TWO_TWEET_ID) {
-                                liked = true;
-                            }
-                        }
-
-                        if (liked) {
-                            let retweeted = false;
-                            const users = await appClient.v2.tweetRetweetedBy(process.env.MISSION_TWO_TWEET_ID);
-
-                            users.data.forEach(user => {
-                                if (user.username === response.data.screen_name) {
-                                    retweeted = true
-                                }
-                            })
-
-                            if (retweeted) {
-                                await appClient.v2.userTimeline(response.data.twitter_id).then(async tweetResponse => {
-                                    let commented = false;
-                                    for (const tweet of tweetResponse.tweets) {
-                                        if (tweet.text.match(/RT @nyanheroes/gi)) {
-                                            retweeted = true;
-                                        }
-                                        let tagCount = tweet.text.match(/@/g);
-                                        if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
-                                            commented = true;
-                                        }
-                                    }
-
-                                    if (!commented) {
-                                        await msg.reply(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
-                                    } else {
-                                        await completeMission(api, msg.author, 2);
-                                        await msg.reply(`You have officially completed Mission 2!`)
-                                    }
-                                }).catch(async error => {
-                                    console.log(error)
-                                    await msg.reply(`Something went wrong trying to check Mission 2, please try to re-react to the message. Remember you have to have completed Mission 1 to complete mission 2.`)
-                                })
-                            } else {
-                                await msg.reply(`In order to complete this mission, you have to Retweet the post.`)
-                            }
-                        } else {
-                            await msg.reply(`In order to complete this mission, you have to Like the post.`)
-                        }
-                    }).catch(async error => {
-                        console.log(error)
-                        await msg.reply(`Please try again in 15 minutes.`)
-                    })
-                }).catch(async error => {
-                    console.log(error)
-                    await msg.reply(`Please re-link your twitter using **/twitter**.`)
-                })
-            } else {
-                await msg.reply(`You have officially completed Mission 2!`)
-            }
-        } catch (e) {
-            console.log(e)
-        }
+        await msg.reply(`Please use **/mission2** instead.`)
+        // try {
+        //     let done = false;
+        //     await api.get('missions/2', {
+        //         params: {
+        //             discord_id: msg.author.id,
+        //             username: msg.author.username,
+        //             discriminator: msg.author.discriminator,
+        //             avatar: msg.author.avatar
+        //         }
+        //     }).then(response => {
+        //         if (response.data.success) {
+        //             done = true;
+        //         }
+        //     }).catch(error => {
+        //         console.log(error)
+        //     })
+        //
+        //     if (!done) {
+        //         await api.get('twitter/information/current', {
+        //             params: {
+        //                 discord_id: msg.author.id,
+        //                 username: msg.author.username,
+        //                 discriminator: msg.author.discriminator,
+        //                 avatar: msg.author.avatar
+        //             }
+        //         }).then(async response => {
+        //             if (response.data.success === false) {
+        //                 await msg.reply("Please link your twitter first with the **/twitter** command.")
+        //                 return;
+        //             }
+        //
+        //             const twitterClient = new TwitterApi({
+        //                 appKey: process.env.TWITTER_API_KEY,
+        //                 appSecret: process.env.TWITTER_API_KEY_SECRET,
+        //                 accessToken: response.data.accessToken,
+        //                 accessSecret: response.data.accessSecret
+        //             })
+        //             const appClient = await twitterClient.appLogin()
+        //             await appClient.v2.userLikedTweets(response.data.twitter_id).then(async tweetResponse => {
+        //                 const likes = tweetResponse.tweets;
+        //                 let liked = false;
+        //                 for (const like of likes) {
+        //                     if (like.id === process.env.MISSION_TWO_TWEET_ID) {
+        //                         liked = true;
+        //                     }
+        //                 }
+        //
+        //                 if (liked) {
+        //                     let retweeted = false;
+        //                     const users = await appClient.v2.tweetRetweetedBy(process.env.MISSION_TWO_TWEET_ID);
+        //
+        //                     users.data.forEach(user => {
+        //                         if (user.username === response.data.screen_name) {
+        //                             retweeted = true
+        //                         }
+        //                     })
+        //
+        //                     if (retweeted) {
+        //                         await appClient.v2.userTimeline(response.data.twitter_id).then(async tweetResponse => {
+        //                             let commented = false;
+        //                             for (const tweet of tweetResponse.tweets) {
+        //                                 if (tweet.text.match(/RT @nyanheroes/gi)) {
+        //                                     retweeted = true;
+        //                                 }
+        //                                 let tagCount = tweet.text.match(/@/g);
+        //                                 if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
+        //                                     commented = true;
+        //                                 }
+        //                             }
+        //
+        //                             if (!commented) {
+        //                                 await msg.reply(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
+        //                             } else {
+        //                                 await completeMission(api, msg.author, 2);
+        //                                 await msg.reply(`You have officially completed Mission 2!`)
+        //                             }
+        //                         }).catch(async error => {
+        //                             console.log(error)
+        //                             await msg.reply(`Something went wrong trying to check Mission 2, please try to re-react to the message. Remember you have to have completed Mission 1 to complete mission 2.`)
+        //                         })
+        //                     } else {
+        //                         await msg.reply(`In order to complete this mission, you have to Retweet the post.`)
+        //                     }
+        //                 } else {
+        //                     await msg.reply(`In order to complete this mission, you have to Like the post.`)
+        //                 }
+        //             }).catch(async error => {
+        //                 console.log(error)
+        //                 await msg.reply(`Please try again in 15 minutes.`)
+        //             })
+        //         }).catch(async error => {
+        //             console.log(error)
+        //             await msg.reply(`Please re-link your twitter using **/twitter**.`)
+        //         })
+        //     } else {
+        //         await msg.reply(`You have officially completed Mission 2!`)
+        //     }
+        // } catch (e) {
+        //     console.log(e)
+        // }
     }
 
     if (msg.content.startsWith("!mission-2-help")) {

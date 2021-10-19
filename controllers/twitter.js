@@ -108,6 +108,7 @@ async function missionTwo(req, res) {
         redisClient.quit()
         return res.status(400).send('You denied the app or your session expired!');
     } else {
+        const api = await axios.api()
         const twitterClient = new TwitterApi({
             appKey: process.env.TWITTER_API_KEY,
             appSecret: process.env.TWITTER_API_KEY_SECRET,
@@ -126,64 +127,85 @@ async function missionTwo(req, res) {
             console.log(error)
         })
 
-        await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
-            await loggedClient.currentUser().then(async twitterUser => {
-                const api = await axios.api()
-                await loggedClient.v2.userByUsername(twitterUser.screen_name).then(async response => {
-                    const twitterUserId = response.data.id
+        let done = false;
+        await api.get('missions/2', {
+            params: {
+                discord_id: discordUser.id,
+                username: discordUser.username,
+                discriminator: discordUser.discriminator,
+                avatar: discordUser.avatar
+            }
+        }).then(response => {
+            if (response.data.success) {
+                done = true;
+            }
+        }).catch(error => {
+            console.log(error)
+        })
 
-                    await api.post('twitter/information', {
-                        user: discordUser,
-                        access_token: accessToken,
-                        access_secret: accessSecret,
-                        id: twitterUserId,
-                        screen_name: twitterUser.screen_name,
-                    }).then(async data => {
-                        await loggedClient.v2.userTimeline(twitterUserId, {
-                            'expansions': 'referenced_tweets.id',
-                            'tweet.fields': ['id', 'created_at']
-                        }).then(async tweetResponse => {
-                            let retweeted = false;
-                            let commented = false;
-                            await tweetResponse.fetchNext(10).then(response => {
-                                console.log("Fetched more results")
-                                console.log(response)
-                            }).catch(error => {
-                                console.log("Couldn't fetch more tweets")
-                                console.log(error)
-                            })
+        if (!done) {
+            await twitterClient.login(oauth_verifier).then(async ({client: loggedClient, accessToken, accessSecret}) => {
+                await loggedClient.currentUser().then(async twitterUser => {
+                    await loggedClient.v2.userByUsername(twitterUser.screen_name).then(async response => {
+                        const twitterUserId = response.data.id
 
-                            for (const tweet of tweetResponse.tweets) {
-                                if (tweet.referenced_tweets) {
-                                    console.log(tweet)
-                                    if (tweet.referenced_tweets[0].id == process.env.MISSION_TWO_TWEET_ID) {
-                                        if (tweet.referenced_tweets[0].type === 'retweeted' || tweet.referenced_tweets[0].type === 'quoted') {
-                                            retweeted = true;
-                                            console.log('retweeted')
-                                        }
-                                        let tagCount = tweet.text.match(/@/g);
-                                        if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
-                                            commented = true;
-                                            console.log('commented')
+                        await api.post('twitter/information', {
+                            user: discordUser,
+                            access_token: accessToken,
+                            access_secret: accessSecret,
+                            id: twitterUserId,
+                            screen_name: twitterUser.screen_name,
+                        }).then(async data => {
+                            await loggedClient.v2.userTimeline(twitterUserId, {
+                                'expansions': 'referenced_tweets.id',
+                                'tweet.fields': ['id', 'created_at']
+                            }).then(async tweetResponse => {
+                                let retweeted = false;
+                                let commented = false;
+                                // await tweetResponse.fetchNext(10).then(response => {
+                                //     console.log("Fetched more results")
+                                //     console.log(response)
+                                // }).catch(error => {
+                                //     console.log("Couldn't fetch more tweets")
+                                //     console.log(error)
+                                // })
+
+                                for (const tweet of tweetResponse.tweets) {
+                                    if (tweet.referenced_tweets) {
+                                        console.log(tweet)
+                                        if (tweet.referenced_tweets[0].id == process.env.MISSION_TWO_TWEET_ID) {
+                                            if (tweet.referenced_tweets[0].type === 'retweeted' || tweet.referenced_tweets[0].type === 'quoted') {
+                                                retweeted = true;
+                                                console.log('retweeted')
+                                            }
+                                            let tagCount = tweet.text.match(/@/g);
+                                            if (tweet.text.match(/@nyanheroes/gi) && tweet.text.match(/#nyanarmy/gi) && tagCount && tagCount.length >= 4) {
+                                                commented = true;
+                                                console.log('commented')
+                                            }
                                         }
                                     }
                                 }
-                            }
 
-                            if (!retweeted) {
-                                await res.send(`In order to complete this mission, retweet the post.`)
-                            } else if (!commented) {
-                                await res.send(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
-                            } else {
-                                await completeMission(api, discordUser, 2);
-                                await res.send(`You have officially completed Mission 2!<br />ATTENTION!!!! If you have NOT completed mission 1, please fill out this form with your Solana Wallet Address: <a href="https://forms.gle/JaCMQindiRXMNYZt7">https://forms.gle/JaCMQindiRXMNYZt7</a>.`)
-                            }
+                                if (!retweeted) {
+                                    await res.send(`In order to complete this mission, retweet the post.`)
+                                } else if (!commented) {
+                                    await res.send(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
+                                } else {
+                                    await completeMission(api, discordUser, 2);
+                                    await res.send(`You have officially completed Mission 2!<br />ATTENTION!!!! If you have NOT completed mission 1, please fill out this form with your Solana Wallet Address: <a href="https://forms.gle/JaCMQindiRXMNYZt7">https://forms.gle/JaCMQindiRXMNYZt7</a>.`)
+                                }
+                            }).catch(error => {
+                                console.log("Timeline error")
+                                console.log(error)
+                            })
+
+                            redisClient.quit()
                         }).catch(error => {
-                            console.log("Timeline error")
                             console.log(error)
+                            res.send(`Something went wrong linking your Twitter account, please try again.`)
+                            redisClient.quit()
                         })
-
-                        redisClient.quit()
                     }).catch(error => {
                         console.log(error)
                         res.send(`Something went wrong linking your Twitter account, please try again.`)
@@ -199,11 +221,10 @@ async function missionTwo(req, res) {
                 res.send(`Something went wrong linking your Twitter account, please try again.`)
                 redisClient.quit()
             })
-        }).catch(error => {
-            console.log(error)
-            res.send(`Something went wrong linking your Twitter account, please try again.`)
+        } else {
+            await res.send(`You have officially completed Mission 2!<br />ATTENTION!!!! If you have NOT completed mission 1, please fill out this form with your Solana Wallet Address: <a href="https://forms.gle/JaCMQindiRXMNYZt7">https://forms.gle/JaCMQindiRXMNYZt7</a>.`)
             redisClient.quit()
-        })
+        }
     }
 }
 

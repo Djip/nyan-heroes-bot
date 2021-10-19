@@ -145,7 +145,7 @@ async function missionTwo(req, res) {
                         }).then(async tweetResponse => {
                             let retweeted = false;
                             let commented = false;
-                            await tweetResponse.fetchNext(50).then(response => {
+                            await tweetResponse.fetchNext(10).then(response => {
                                 console.log("Fetched more results")
                                 console.log(response)
                             }).catch(error => {

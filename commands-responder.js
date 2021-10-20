@@ -343,7 +343,7 @@ client.on('interactionCreate', async interaction => {
             }).then(async response => {
                 if (response.data.mission >= 2) {
                     redisClient.set(`mission_3_answered_${interaction.user.id}`, true)
-                    if (answer === 'Nekovia') {
+                    if (answer === 'Nekovia' || answer === 'nekovia') {
                         await completeMission(api, interaction.user, '3');
                     }
 

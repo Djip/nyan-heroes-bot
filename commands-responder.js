@@ -332,7 +332,7 @@ client.on('interactionCreate', async interaction => {
         }).catch(error => {
         })
 
-        if (completed) {
+        if (!completed) {
             await api.get('missions/last-completion', {
                 params: {
                     discord_id: interaction.user.id,

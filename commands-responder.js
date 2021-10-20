@@ -341,8 +341,8 @@ client.on('interactionCreate', async interaction => {
                     avatar: interaction.user.avatar
                 }
             }).then(async response => {
-                redisClient.set(`mission_3_answered_${interaction.user.id}`, true)
                 if (response.data.mission >= 2) {
+                    redisClient.set(`mission_3_answered_${interaction.user.id}`, true)
                     if (answer === 'Nekovia') {
                         await completeMission(api, interaction.user, '3');
                     }

@@ -321,12 +321,13 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'mission3') {
-        await setupRedis();
+        const client = await getClient();
+        const clientGet = promisify(client.get).bind(redisClient);
         await interaction.deferReply({ephemeral: true});
         const answer = interaction.options.getString('answer');
 
         let completed = false
-        await getAsync(`mission_3_answered_${interaction.user.id}`).then(response => {
+        await clientGet(`mission_3_answered_${interaction.user.id}`).then(response => {
             if (response) {
                 completed = true
             }
@@ -356,15 +357,18 @@ client.on('interactionCreate', async interaction => {
                         await interaction.editReply({ content: `You have to complete Mission 1 and Mission 2, before you can submit your answer.`, ephemeral: true})
                     }
                 }
+                client.quit()
             }).catch(async error => {
                 if (interaction) {
                     await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
                 }
+                client.quit()
             })
         } else {
             if (interaction) {
                 await interaction.editReply({content: `You have already submitted your answer.`, ephemeral: true})
             }
+            client.quit()
         }
     }
 })
@@ -413,6 +417,15 @@ client.on('messageCreate', async msg => {
 })
 
 client.login(process.env.DISCORD_BOT_TOKEN)
+
+async function getClient() {
+    const client = await redis.createClient(process.env.REDIS_URL)
+    redisClient.on("error", function (error) {
+        console.error(error);
+    });
+
+    return client;
+}
 
 async function setupRedis() {
     if (!redisClient) {

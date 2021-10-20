@@ -321,54 +321,70 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'mission3') {
-        const client = await getClient();
-        const clientGet = promisify(client.get).bind(redisClient);
-        await interaction.deferReply({ephemeral: true});
-        const answer = interaction.options.getString('answer');
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
 
-        let completed = false
-        await clientGet(`mission_3_answered_${interaction.user.id}`).then(response => {
-            if (response) {
-                completed = true
-            }
-        }).catch(error => {
-        })
-
-        if (!completed) {
-            await api.get('missions/last-completion', {
-                params: {
-                    discord_id: interaction.user.id,
-                    username: interaction.user.username,
-                    discriminator: interaction.user.discriminator,
-                    avatar: interaction.user.avatar
+            let completed = false
+            await clientGet(`mission_3_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
                 }
-            }).then(async response => {
-                if (response.data.mission >= 2) {
-                    redisClient.set(`mission_3_answered_${interaction.user.id}`, true)
-                    if (answer === 'Nekovia' || answer === 'nekovia') {
-                        await completeMission(api, interaction.user, '3');
-                    }
-
-                    if (interaction) {
-                        await interaction.editReply({ content: `Your submission for Mission 3 has been accepted.`, ephemeral: true})
-                    }
-                } else {
-                    if (interaction) {
-                        await interaction.editReply({ content: `You have to complete Mission 1 and Mission 2, before you can submit your answer.`, ephemeral: true})
-                    }
-                }
-                client.quit()
-            }).catch(async error => {
-                if (interaction) {
-                    await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
-                }
-                client.quit()
+            }).catch(error => {
             })
-        } else {
+
+            if (!completed) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 2) {
+                        redisClient.set(`mission_3_answered_${interaction.user.id}`, true)
+                        if (answer === 'Nekovia' || answer === 'nekovia') {
+                            await completeMission(api, interaction.user, '3');
+                        }
+
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `Your submission for Mission 3 has been accepted.`,
+                                ephemeral: true
+                            })
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1 and Mission 2, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer.`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
             if (interaction) {
                 await interaction.editReply({content: `You have already submitted your answer.`, ephemeral: true})
             }
-            client.quit()
         }
     }
 })

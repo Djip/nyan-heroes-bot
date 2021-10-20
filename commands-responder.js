@@ -321,6 +321,7 @@ client.on('interactionCreate', async interaction => {
     }
 
     if (interaction.commandName === 'mission3') {
+        await setupRedis();
         await interaction.deferReply({ephemeral: true});
         const answer = interaction.options.getString('answer');
 

@@ -346,10 +346,14 @@ client.on('interactionCreate', async interaction => {
                     if (answer === 'Nekovia') {
                         await completeMission(api, interaction.user, '3');
                     }
-                }
 
-                if (interaction) {
-                    await interaction.editReply({ content: `Your submission for Mission 3 has been accepted.`, ephemeral: true})
+                    if (interaction) {
+                        await interaction.editReply({ content: `Your submission for Mission 3 has been accepted.`, ephemeral: true})
+                    }
+                } else {
+                    if (interaction) {
+                        await interaction.editReply({ content: `You have to complete Mission 1 and Mission 2, before you can submit your answer.`, ephemeral: true})
+                    }
                 }
             }).catch(async error => {
                 if (interaction) {

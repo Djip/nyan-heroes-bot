@@ -196,7 +196,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'mission-1') {
+    if (interaction.commandName === 'mission1') {
         try {
             await interaction.deferReply({ephemeral: true})
             let mission = 1

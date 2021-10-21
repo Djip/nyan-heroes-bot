@@ -31,14 +31,28 @@ const commandsHook = [
     //     .setName('link-twitter')
     //     .setDescription('Link your Twitter to gain XP from re-tweets'),
     new SlashCommandBuilder()
-        .setName('mission-1')
+        .setName('mission1')
         .setDescription('Link your Twitter'),
     new SlashCommandBuilder()
-        .setName('mission-2')
+        .setName('mission2')
         .setDescription('Check if you have completed Mission 2'),
     new SlashCommandBuilder()
         .setName('twitter')
+        .setDescription('Link your Twitter'),
+    new SlashCommandBuilder()
+        .setName('wallet')
         .setDescription('Link your Twitter')
+        .addStringOption(option => option.setName('wallet').setDescription('Please enter your public Solana Wallet address').setRequired(true)),
+    new SlashCommandBuilder()
+        .setName('mission3')
+        .setDescription('Please choose your final answer.')
+        .addStringOption(option => option.setName('answer')
+            .setDescription('Please choose your final answer.')
+            .setRequired(true)
+            .addChoice('Catopia', 'catopia')
+            .addChoice('Nyanland', 'nyanland')
+            .addChoice('Nekovia', 'nekovia')
+            .addChoice('Guardia', 'guardia'))
 ]
     .map(command => command.toJSON());
 

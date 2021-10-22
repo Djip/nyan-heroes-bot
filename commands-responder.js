@@ -426,7 +426,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'testa') {
+    if (interaction.commandName === 'mission4a') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -487,7 +487,7 @@ client.on('interactionCreate', async interaction => {
 
                             if (interaction) {
                                 await interaction.editReply({
-                                    content: `You have submitted your answer for Mission A, B and C.`,
+                                    content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`,
                                     ephemeral: true
                                 })
                             }
@@ -519,7 +519,7 @@ client.on('interactionCreate', async interaction => {
                 })
             } else if (completed) {
                 if (interaction) {
-                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C.`, ephemeral: true})
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`, ephemeral: true})
                 }
                 client.quit()
             } else {
@@ -536,7 +536,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'testb') {
+    if (interaction.commandName === 'mission4b') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -597,7 +597,7 @@ client.on('interactionCreate', async interaction => {
 
                             if (interaction) {
                                 await interaction.editReply({
-                                    content: `You have submitted your answer for Mission A, B and C.`,
+                                    content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`,
                                     ephemeral: true
                                 })
                             }
@@ -629,7 +629,7 @@ client.on('interactionCreate', async interaction => {
                 })
             } else if (completed) {
                 if (interaction) {
-                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C.`, ephemeral: true})
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`, ephemeral: true})
                 }
                 client.quit()
             } else {
@@ -646,7 +646,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'testc') {
+    if (interaction.commandName === 'mission4c') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -706,7 +706,7 @@ client.on('interactionCreate', async interaction => {
 
                             if (interaction) {
                                 await interaction.editReply({
-                                    content: `You have submitted your answer for Mission A, B and C.`,
+                                    content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**.`,
                                     ephemeral: true
                                 })
                             }
@@ -738,7 +738,7 @@ client.on('interactionCreate', async interaction => {
                 })
             } else if (completed) {
                 if (interaction) {
-                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C.`, ephemeral: true})
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`, ephemeral: true})
                 }
                 client.quit()
             } else {

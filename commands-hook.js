@@ -54,7 +54,7 @@ const commandsHook = [
             .addChoice('Nekovia', 'nekovia')
             .addChoice('Guardia', 'guardia')),
     new SlashCommandBuilder()
-        .setName('testa')
+        .setName('mission4a')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')
@@ -64,7 +64,7 @@ const commandsHook = [
             .addChoice('8', '8')
             .addChoice('9', '9')),
     new SlashCommandBuilder()
-        .setName('testb')
+        .setName('mission4b')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')
@@ -74,7 +74,7 @@ const commandsHook = [
             .addChoice('Defenders', 'defenders')
             .addChoice('Champions', 'champions')),
     new SlashCommandBuilder()
-        .setName('testc')
+        .setName('mission4c')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')

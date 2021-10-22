@@ -60,7 +60,7 @@ async function callback(req, res) {
                     id: twitterUser.id,
                     screen_name: twitterUser.screen_name,
                 }).then(async data => {
-                    res.send(`Your Twitter account has been linked successfully. Be sure that you have filled out the Google form with your Solana Wallet address to enter the raffle.`)
+                    res.send(`Your Twitter account has been linked successfully. Be sure that you have filled out your Solana Wallet address to enter the raffle, using the /wallet command.`)
                     // await discordUser.send(`Your Twitter account has been linked`);
                     //
                     // // Put a date/time restriciton on this
@@ -193,7 +193,7 @@ async function missionTwo(req, res) {
                                     await res.send(`In order to complete this mission, you have to reply under the post and tag 3 friends, and include #nyanarmy.`)
                                 } else {
                                     await completeMission(api, discordUser, 2);
-                                    await res.send(`You have officially completed Mission 2!<br />ATTENTION!!!! If you have NOT completed mission 1, please fill out this form with your Solana Wallet Address: <a href="https://forms.gle/JaCMQindiRXMNYZt7">https://forms.gle/JaCMQindiRXMNYZt7</a>.`)
+                                    await res.send(`You have officially completed Mission 2!<br />ATTENTION!!!! If you have NOT completed mission 1, please fill your Solana Wallet Address using the /twitter command.`)
                                 }
                             }).catch(error => {
                                 console.log("Timeline error")

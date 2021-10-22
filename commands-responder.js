@@ -458,7 +458,7 @@ client.on('interactionCreate', async interaction => {
                         avatar: interaction.user.avatar
                     }
                 }).then(async response => {
-                    if (response.data.mission >= 3) {
+                    if (response.data.mission >= 2) {
                         client.set(`mission_4a_answered_${interaction.user.id}`, true)
                         let missionFourA = false;
                         if (answer === '9') {
@@ -568,7 +568,7 @@ client.on('interactionCreate', async interaction => {
                         avatar: interaction.user.avatar
                     }
                 }).then(async response => {
-                    if (response.data.mission >= 3) {
+                    if (response.data.mission >= 2) {
                         client.set(`mission_4b_answered_${interaction.user.id}`, true)
                         let missionFourB = false;
                         if (answer === 'guardians') {
@@ -678,7 +678,7 @@ client.on('interactionCreate', async interaction => {
                         avatar: interaction.user.avatar
                     }
                 }).then(async response => {
-                    if (response.data.mission >= 3) {
+                    if (response.data.mission >= 2) {
                         let missionFourC = false;
                         if (answer === 'soldier') {
                             missionFourC = true;

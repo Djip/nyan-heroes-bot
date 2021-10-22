@@ -487,7 +487,7 @@ client.on('interactionCreate', async interaction => {
 
                             if (interaction) {
                                 await interaction.editReply({
-                                    content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`,
+                                    content: `You have submitted your answer for Mission A, B and C - If you haven't done so already, please connect your Solana Wallet using **/wallet**`,
                                     ephemeral: true
                                 })
                             }
@@ -519,7 +519,7 @@ client.on('interactionCreate', async interaction => {
                 })
             } else if (completed) {
                 if (interaction) {
-                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
                 }
                 client.quit()
             } else {
@@ -597,7 +597,7 @@ client.on('interactionCreate', async interaction => {
 
                             if (interaction) {
                                 await interaction.editReply({
-                                    content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`,
+                                    content: `You have submitted your answer for Mission A, B and C - If you haven't done so already, please connect your Solana Wallet using **/wallet**`,
                                     ephemeral: true
                                 })
                             }
@@ -629,7 +629,7 @@ client.on('interactionCreate', async interaction => {
                 })
             } else if (completed) {
                 if (interaction) {
-                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
                 }
                 client.quit()
             } else {
@@ -706,7 +706,7 @@ client.on('interactionCreate', async interaction => {
 
                             if (interaction) {
                                 await interaction.editReply({
-                                    content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**.`,
+                                    content: `You have submitted your answer for Mission A, B and C - If you haven't done so already, please connect your Solana Wallet using **/wallet**.`,
                                     ephemeral: true
                                 })
                             }
@@ -738,7 +738,7 @@ client.on('interactionCreate', async interaction => {
                 })
             } else if (completed) {
                 if (interaction) {
-                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - Please re-connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
                 }
                 client.quit()
             } else {

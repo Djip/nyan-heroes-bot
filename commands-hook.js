@@ -52,7 +52,37 @@ const commandsHook = [
             .addChoice('Catopia', 'catopia')
             .addChoice('Nyanland', 'nyanland')
             .addChoice('Nekovia', 'nekovia')
-            .addChoice('Guardia', 'guardia'))
+            .addChoice('Guardia', 'guardia')),
+    new SlashCommandBuilder()
+        .setName('testa')
+        .setDescription('Please choose your final answer.')
+        .addStringOption(option => option.setName('answer')
+            .setDescription('Please choose your final answer.')
+            .setRequired(true)
+            .addChoice('6', '6')
+            .addChoice('7', '7')
+            .addChoice('8', '8')
+            .addChoice('9', '9')),
+    new SlashCommandBuilder()
+        .setName('testb')
+        .setDescription('Please choose your final answer.')
+        .addStringOption(option => option.setName('answer')
+            .setDescription('Please choose your final answer.')
+            .setRequired(true)
+            .addChoice('Protectors', 'protectors')
+            .addChoice('Guardians', 'guardians')
+            .addChoice('Defenders', 'defenders')
+            .addChoice('Champions', 'champions')),
+    new SlashCommandBuilder()
+        .setName('testc')
+        .setDescription('Please choose your final answer.')
+        .addStringOption(option => option.setName('answer')
+            .setDescription('Please choose your final answer.')
+            .setRequired(true)
+            .addChoice('Warrior', 'warrior')
+            .addChoice('Soldier', 'soldier')
+            .addChoice('Brawler', 'brawler')
+            .addChoice('Defender', 'defender'))
 ]
     .map(command => command.toJSON());
 

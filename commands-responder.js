@@ -196,169 +196,237 @@ client.on('interactionCreate', async interaction => {
     //     }
     // }
 
-    if (interaction.commandName === 'wallet') {
-        try {
-            await interaction.deferReply({ephemeral: true});
-            const wallet = interaction.options.getString('wallet');
+    // if (interaction.commandName === 'wallet') {
+    //     try {
+    //         await interaction.deferReply({ephemeral: true});
+    //         const wallet = interaction.options.getString('wallet');
+    //
+    //         if (wallet) {
+    //             await api.put('users', {
+    //                 user: interaction.user,
+    //                 wallet: wallet
+    //             }).then(async response => {
+    //                 if (response.data) {
+    //                     if (interaction) {
+    //                         await interaction.editReply({content: `Your wallet has been saved.`, ephemeral: true})
+    //                     }
+    //                 } else {
+    //                     if (interaction) {
+    //                         await interaction.editReply({content: `Something went wrong, try again.`, ephemeral: true})
+    //                     }
+    //                 }
+    //             }).catch(async error => {
+    //                 console.log(error)
+    //                 if (interaction) {
+    //                     await interaction.editReply({content: `Something went wrong, try again.`, ephemeral: true})
+    //                 }
+    //             })
+    //         } else {
+    //             if (interaction) {
+    //                 await interaction.editReply({content: `Please enter your public Solana Wallet address.`, ephemeral: true})
+    //             }
+    //         }
+    //     } catch (e) {
+    //         console.log(e)
+    //         if (interaction) {
+    //             await interaction.editReply({content: `Something went wrong, try again.`, ephemeral: true})
+    //         }
+    //     }
+    // }
+    //
+    // if (interaction.commandName === 'mission1') {
+    //     try {
+    //         await interaction.deferReply({ephemeral: true})
+    //         let mission = 1
+    //         await api.get('missions/1', {
+    //             params: {
+    //                 discord_id: interaction.member.user.id,
+    //                 username: interaction.member.user.username,
+    //                 discriminator: interaction.member.user.discriminator,
+    //                 avatar: interaction.member.user.avatar
+    //             }
+    //         }).then(response => {
+    //             mission = response.data.status
+    //         }).catch(async error => {
+    //             if (interaction) {
+    //                 await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+    //             }
+    //         })
+    //
+    //         if (mission === 1) {
+    //             const twitterClient = new TwitterApi({
+    //                 appKey: process.env.TWITTER_API_KEY,
+    //                 appSecret: process.env.TWITTER_API_KEY_SECRET
+    //             })
+    //             const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + interaction.member.user.id
+    //             const authLink = await twitterClient.generateAuthLink(callbackUrl)
+    //             if (redisClient) {
+    //                 redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
+    //                     oauth_token: authLink.oauth_token,
+    //                     oauth_token_secret: authLink.oauth_token_secret
+    //                 }), function(error) {
+    //                     console.log(error)
+    //                 })
+    //
+    //                 if (interaction) {
+    //                     await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
+    //                 }
+    //             } else {
+    //                 if (interaction) {
+    //                     await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+    //                 }
+    //             }
+    //         } else {
+    //             if (interaction) {
+    //                 await interaction.editReply({ content: "You have already linked your Twitter.", ephemeral: true})
+    //             }
+    //         }
+    //     } catch (e) {
+    //         if (interaction) {
+    //             await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
+    //         }
+    //     }
+    // }
+    //
+    // if (interaction.commandName === 'twitter') {
+    //     if (!redisClient) {
+    //         await setupRedis();
+    //     }
+    //     try {
+    //         await interaction.deferReply({ephemeral: true})
+    //         const twitterClient = new TwitterApi({
+    //             appKey: process.env.TWITTER_API_KEY,
+    //             appSecret: process.env.TWITTER_API_KEY_SECRET
+    //         })
+    //         const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + interaction.member.user.id
+    //         const authLink = await twitterClient.generateAuthLink(callbackUrl)
+    //         if (redisClient) {
+    //             redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
+    //                 oauth_token: authLink.oauth_token,
+    //                 oauth_token_secret: authLink.oauth_token_secret
+    //             }), function(error) {
+    //                 console.log(error)
+    //             })
+    //
+    //             if (interaction) {
+    //                 await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
+    //             }
+    //         } else {
+    //             if (interaction) {
+    //                 await interaction.editReply({ content: "Something went wrong linking your Twitter account.", ephemeral: true})
+    //             }
+    //         }
+    //     } catch (e) {
+    //         if (interaction) {
+    //             await interaction.editReply({ content: "Something went wrong linking your Twitter account.", ephemeral: true})
+    //         }
+    //     }
+    // }
+    //
+    // if (interaction.commandName === 'mission2') {
+    //     if (!redisClient) {
+    //         await setupRedis();
+    //     }
+    //     try {
+    //         await interaction.deferReply({ephemeral: true})
+    //         const twitterClient = new TwitterApi({
+    //             appKey: process.env.TWITTER_API_KEY,
+    //             appSecret: process.env.TWITTER_API_KEY_SECRET
+    //         })
+    //         const callbackUrl = process.env.TWITTER_MISSION_TWO + '?discord_id=' + interaction.member.user.id
+    //         const authLink = await twitterClient.generateAuthLink(callbackUrl)
+    //         if (redisClient) {
+    //             redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
+    //                 oauth_token: authLink.oauth_token,
+    //                 oauth_token_secret: authLink.oauth_token_secret
+    //             }), function(error) {
+    //                 console.log(error)
+    //             })
+    //
+    //             if (interaction) {
+    //                 await interaction.editReply({ content: `Please use the following URL to check if you have completed Mission 2: ${authLink.url}`, ephemeral: true})
+    //             }
+    //         } else {
+    //             if (interaction) {
+    //                 await interaction.editReply({ content: `Something went wrong linking your Twitter account`, ephemeral: true})
+    //             }
+    //         }
+    //     } catch (e) {
+    //         if (interaction) {
+    //             await interaction.editReply({ content: `Something went wrong linking your Twitter account`, ephemeral: true})
+    //         }
+    //     }
+    // }
+    //
+    // if (interaction.commandName === 'mission3') {
+    //     try {
+    //         const client = await getClient();
+    //         const clientGet = promisify(client.get).bind(redisClient);
+    //         await interaction.deferReply({ephemeral: true});
+    //         const answer = interaction.options.getString('answer');
+    //
+    //         let completed = false
+    //         await clientGet(`mission_3_answered_${interaction.user.id}`).then(response => {
+    //             if (response) {
+    //                 completed = true
+    //             }
+    //         }).catch(error => {
+    //         })
+    //
+    //         if (!completed) {
+    //             await api.get('missions/last-completion', {
+    //                 params: {
+    //                     discord_id: interaction.user.id,
+    //                     username: interaction.user.username,
+    //                     discriminator: interaction.user.discriminator,
+    //                     avatar: interaction.user.avatar
+    //                 }
+    //             }).then(async response => {
+    //                 if (response.data.mission >= 2) {
+    //                     client.set(`mission_3_answered_${interaction.user.id}`, true)
+    //                     if (answer === 'Nekovia' || answer === 'nekovia') {
+    //                         await completeMission(api, interaction.user, '3');
+    //                     }
+    //
+    //                     if (interaction) {
+    //                         await interaction.editReply({
+    //                             content: `Your submission for Mission 3 has been accepted.`,
+    //                             ephemeral: true
+    //                         })
+    //                     }
+    //                 } else {
+    //                     if (interaction) {
+    //                         await interaction.editReply({
+    //                             content: `You have to complete Mission 1 and Mission 2, before you can submit your answer.`,
+    //                             ephemeral: true
+    //                         })
+    //                     }
+    //                 }
+    //                 client.quit()
+    //             }).catch(async error => {
+    //                 if (interaction) {
+    //                     await interaction.editReply({
+    //                         content: `Something went wrong, please try again.`,
+    //                         ephemeral: true
+    //                     })
+    //                 }
+    //                 client.quit()
+    //             })
+    //         } else {
+    //             if (interaction) {
+    //                 await interaction.editReply({content: `You have already submitted your answer.`, ephemeral: true})
+    //             }
+    //             client.quit()
+    //         }
+    //     } catch (e) {
+    //         console.log(e)
+    //         if (interaction) {
+    //             await interaction.editReply({content: `You have already submitted your answer.`, ephemeral: true})
+    //         }
+    //     }
+    // }
 
-            if (wallet) {
-                await api.put('users', {
-                    user: interaction.user,
-                    wallet: wallet
-                }).then(async response => {
-                    if (response.data) {
-                        if (interaction) {
-                            await interaction.editReply({content: `Your wallet has been saved.`, ephemeral: true})
-                        }
-                    } else {
-                        if (interaction) {
-                            await interaction.editReply({content: `Something went wrong, try again.`, ephemeral: true})
-                        }
-                    }
-                }).catch(async error => {
-                    console.log(error)
-                    if (interaction) {
-                        await interaction.editReply({content: `Something went wrong, try again.`, ephemeral: true})
-                    }
-                })
-            } else {
-                if (interaction) {
-                    await interaction.editReply({content: `Please enter your public Solana Wallet address.`, ephemeral: true})
-                }
-            }
-        } catch (e) {
-            console.log(e)
-            if (interaction) {
-                await interaction.editReply({content: `Something went wrong, try again.`, ephemeral: true})
-            }
-        }
-    }
-
-    if (interaction.commandName === 'mission1') {
-        try {
-            await interaction.deferReply({ephemeral: true})
-            let mission = 1
-            await api.get('missions/1', {
-                params: {
-                    discord_id: interaction.member.user.id,
-                    username: interaction.member.user.username,
-                    discriminator: interaction.member.user.discriminator,
-                    avatar: interaction.member.user.avatar
-                }
-            }).then(response => {
-                mission = response.data.status
-            }).catch(async error => {
-                if (interaction) {
-                    await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
-                }
-            })
-
-            if (mission === 1) {
-                const twitterClient = new TwitterApi({
-                    appKey: process.env.TWITTER_API_KEY,
-                    appSecret: process.env.TWITTER_API_KEY_SECRET
-                })
-                const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + interaction.member.user.id
-                const authLink = await twitterClient.generateAuthLink(callbackUrl)
-                if (redisClient) {
-                    redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
-                        oauth_token: authLink.oauth_token,
-                        oauth_token_secret: authLink.oauth_token_secret
-                    }), function(error) {
-                        console.log(error)
-                    })
-
-                    if (interaction) {
-                        await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
-                    }
-                } else {
-                    if (interaction) {
-                        await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
-                    }
-                }
-            } else {
-                if (interaction) {
-                    await interaction.editReply({ content: "You have already linked your Twitter.", ephemeral: true})
-                }
-            }
-        } catch (e) {
-            if (interaction) {
-                await interaction.editReply({ content: "Something went wrong linking your Twitter account, please use the command /mission-1 again.", ephemeral: true})
-            }
-        }
-    }
-
-    if (interaction.commandName === 'twitter') {
-        if (!redisClient) {
-            await setupRedis();
-        }
-        try {
-            await interaction.deferReply({ephemeral: true})
-            const twitterClient = new TwitterApi({
-                appKey: process.env.TWITTER_API_KEY,
-                appSecret: process.env.TWITTER_API_KEY_SECRET
-            })
-            const callbackUrl = process.env.TWITTER_CALLBACK_URL + '?discord_id=' + interaction.member.user.id
-            const authLink = await twitterClient.generateAuthLink(callbackUrl)
-            if (redisClient) {
-                redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
-                    oauth_token: authLink.oauth_token,
-                    oauth_token_secret: authLink.oauth_token_secret
-                }), function(error) {
-                    console.log(error)
-                })
-
-                if (interaction) {
-                    await interaction.editReply({ content: `Please use the following URL to link your Twitter account: ${authLink.url}`, ephemeral: true})
-                }
-            } else {
-                if (interaction) {
-                    await interaction.editReply({ content: "Something went wrong linking your Twitter account.", ephemeral: true})
-                }
-            }
-        } catch (e) {
-            if (interaction) {
-                await interaction.editReply({ content: "Something went wrong linking your Twitter account.", ephemeral: true})
-            }
-        }
-    }
-
-    if (interaction.commandName === 'mission2') {
-        if (!redisClient) {
-            await setupRedis();
-        }
-        try {
-            await interaction.deferReply({ephemeral: true})
-            const twitterClient = new TwitterApi({
-                appKey: process.env.TWITTER_API_KEY,
-                appSecret: process.env.TWITTER_API_KEY_SECRET
-            })
-            const callbackUrl = process.env.TWITTER_MISSION_TWO + '?discord_id=' + interaction.member.user.id
-            const authLink = await twitterClient.generateAuthLink(callbackUrl)
-            if (redisClient) {
-                redisClient.set('twitter-auth-' + interaction.member.user.id, JSON.stringify({
-                    oauth_token: authLink.oauth_token,
-                    oauth_token_secret: authLink.oauth_token_secret
-                }), function(error) {
-                    console.log(error)
-                })
-
-                if (interaction) {
-                    await interaction.editReply({ content: `Please use the following URL to check if you have completed Mission 2: ${authLink.url}`, ephemeral: true})
-                }
-            } else {
-                if (interaction) {
-                    await interaction.editReply({ content: `Something went wrong linking your Twitter account`, ephemeral: true})
-                }
-            }
-        } catch (e) {
-            if (interaction) {
-                await interaction.editReply({ content: `Something went wrong linking your Twitter account`, ephemeral: true})
-            }
-        }
-    }
-
-    if (interaction.commandName === 'mission3') {
+    if (interaction.commandName === 'testa') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -366,14 +434,22 @@ client.on('interactionCreate', async interaction => {
             const answer = interaction.options.getString('answer');
 
             let completed = false
-            await clientGet(`mission_3_answered_${interaction.user.id}`).then(response => {
+            let answered = false
+            await clientGet(`mission_4_answered_${interaction.user.id}`).then(response => {
                 if (response) {
                     completed = true
                 }
             }).catch(error => {
             })
 
-            if (!completed) {
+            await clientGet(`mission_4a_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
                 await api.get('missions/last-completion', {
                     params: {
                         discord_id: interaction.user.id,
@@ -382,22 +458,51 @@ client.on('interactionCreate', async interaction => {
                         avatar: interaction.user.avatar
                     }
                 }).then(async response => {
-                    if (response.data.mission >= 2) {
-                        redisClient.set(`mission_3_answered_${interaction.user.id}`, true)
-                        if (answer === 'Nekovia' || answer === 'nekovia') {
-                            await completeMission(api, interaction.user, '3');
+                    if (response.data.mission >= 3) {
+                        client.set(`mission_4a_answered_${interaction.user.id}`, true)
+                        let missionFourA = false;
+                        if (answer === '9') {
+                            missionFourA = true;
                         }
 
-                        if (interaction) {
-                            await interaction.editReply({
-                                content: `Your submission for Mission 3 has been accepted.`,
-                                ephemeral: true
-                            })
+                        let missionFourB = false;
+                        let missionFourC = false;
+                        await clientGet(`mission_4b_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFourB = true;
+                            }
+                        })
+                        await clientGet(`mission_4c_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFourC = true;
+                            }
+                        })
+
+                        if (missionFourB && missionFourC) {
+                            client.set(`mission_4_answered_${interaction.user.id}`, true)
+
+                            if (missionFourA) {
+                                await completeMission(api, interaction.user, '4');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission A, B and C.`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 4 A has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
                         }
                     } else {
                         if (interaction) {
                             await interaction.editReply({
-                                content: `You have to complete Mission 1 and Mission 2, before you can submit your answer.`,
+                                content: `You have to complete Mission 1, Mission 2 and Mission 3, before you can submit your answer.`,
                                 ephemeral: true
                             })
                         }
@@ -412,16 +517,240 @@ client.on('interactionCreate', async interaction => {
                     }
                     client.quit()
                 })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C.`, ephemeral: true})
+                }
+                client.quit()
             } else {
                 if (interaction) {
-                    await interaction.editReply({content: `You have already submitted your answer.`, ephemeral: true})
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 4 A`, ephemeral: true})
                 }
                 client.quit()
             }
         } catch (e) {
             console.log(e)
             if (interaction) {
-                await interaction.editReply({content: `You have already submitted your answer.`, ephemeral: true})
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
+            }
+        }
+    }
+
+    if (interaction.commandName === 'testb') {
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
+
+            let completed = false
+            let answered = false
+            await clientGet(`mission_4_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
+                }
+            }).catch(error => {
+            })
+
+            await clientGet(`mission_4b_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 3) {
+                        client.set(`mission_4b_answered_${interaction.user.id}`, true)
+                        let missionFourB = false;
+                        if (answer === 'guardians') {
+                            missionFourB = true;
+                        }
+
+                        let missionFourA = false;
+                        let missionFourC = false;
+                        await clientGet(`mission_4a_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFourA = true;
+                            }
+                        })
+                        await clientGet(`mission_4c_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFourC = true;
+                            }
+                        })
+
+                        if (missionFourA && missionFourC) {
+                            client.set(`mission_4_answered_${interaction.user.id}`, true)
+
+                            if (missionFourB) {
+                                await completeMission(api, interaction.user, '4');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission A, B and C.`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 4 B has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1, Mission 2 and Mission 3, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C.`, ephemeral: true})
+                }
+                client.quit()
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 4 B`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
+            if (interaction) {
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
+            }
+        }
+    }
+
+    if (interaction.commandName === 'testc') {
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
+
+            let completed = false
+            let answered = false
+            await clientGet(`mission_4_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
+                }
+            }).catch(error => {
+            })
+
+            await clientGet(`mission_4c_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 3) {
+                        let missionFourC = false;
+                        if (answer === 'soldier') {
+                            missionFourC = true;
+                        }
+
+                        let missionFourA = false;
+                        let missionFourB = false;
+                        await clientGet(`mission_4a_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFourA = true;
+                            }
+                        })
+                        await clientGet(`mission_4b_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFourB = true;
+                            }
+                        })
+
+                        if (missionFourA && missionFourB) {
+                            client.set(`mission_4_answered_${interaction.user.id}`, true)
+
+                            if (missionFourC) {
+                                await completeMission(api, interaction.user, '4');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission A, B and C.`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 4 B has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1, Mission 2 and Mission 3, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission A, B and C.`, ephemeral: true})
+                }
+                client.quit()
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 4 C`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
+            if (interaction) {
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
             }
         }
     }
@@ -439,6 +768,16 @@ client.on('messageCreate', async msg => {
 
     if(msg.content.startsWith("!mission2")) {
         await msg.reply(`Please use **/mission2** instead.`)
+    }
+
+    if(msg.content.startsWith("!resetredis")) {
+        await setupRedis()
+
+        redisClient.del('mission_4a_answered_135130716219375617')
+        redisClient.del('mission_4b_answered_135130716219375617')
+        redisClient.del('mission_4c_answered_135130716219375617')
+        redisClient.del('mission_4_answered_135130716219375617')
+        console.log("OK")
     }
 
     if (msg.content.startsWith("!mission-2-help")) {

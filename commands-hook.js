@@ -41,7 +41,7 @@ const commandsHook = [
         .setDescription('Link your Twitter'),
     new SlashCommandBuilder()
         .setName('wallet')
-        .setDescription('Link your Twitter')
+        .setDescription('Save your wallet')
         .addStringOption(option => option.setName('wallet').setDescription('Please enter your public Solana Wallet address').setRequired(true)),
     new SlashCommandBuilder()
         .setName('mission3')

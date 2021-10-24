@@ -755,7 +755,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'mission5a') {
+    if (interaction.commandName === 'test5a') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -877,7 +877,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'mission5b') {
+    if (interaction.commandName === 'test5b') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -999,7 +999,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'mission5c') {
+    if (interaction.commandName === 'test5c') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -1121,7 +1121,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'mission5d') {
+    if (interaction.commandName === 'test5d') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);
@@ -1243,7 +1243,7 @@ client.on('interactionCreate', async interaction => {
         }
     }
 
-    if (interaction.commandName === 'mission5e') {
+    if (interaction.commandName === 'test5e') {
         try {
             const client = await getClient();
             const clientGet = promisify(client.get).bind(redisClient);

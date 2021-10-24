@@ -84,7 +84,7 @@ const commandsHook = [
             .addChoice('Brawler', 'brawler')
             .addChoice('Defender', 'defender')),
     new SlashCommandBuilder()
-        .setName('test5a')
+        .setName('mission5a')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')
@@ -94,7 +94,7 @@ const commandsHook = [
             .addChoice('Access land presales', '3')
             .addChoice('All of the above', '4')),
     new SlashCommandBuilder()
-        .setName('test5b')
+        .setName('mission5b')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')
@@ -104,7 +104,7 @@ const commandsHook = [
             .addChoice('7%', '7')
             .addChoice('4%', '4')),
     new SlashCommandBuilder()
-        .setName('test5c')
+        .setName('mission5c')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')
@@ -114,7 +114,7 @@ const commandsHook = [
             .addChoice('5', '5')
             .addChoice('6', '6')),
     new SlashCommandBuilder()
-        .setName('test5d')
+        .setName('mission5d')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')
@@ -124,7 +124,7 @@ const commandsHook = [
             .addChoice('Brawler', 'brawler')
             .addChoice('Soldier', 'soldier')),
     new SlashCommandBuilder()
-        .setName('test5e')
+        .setName('mission5e')
         .setDescription('Please choose your final answer.')
         .addStringOption(option => option.setName('answer')
             .setDescription('Please choose your final answer.')

@@ -754,6 +754,616 @@ client.on('interactionCreate', async interaction => {
             }
         }
     }
+
+    if (interaction.commandName === 'mission5a') {
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
+
+            let completed = false
+            let answered = false
+            await clientGet(`mission_5_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
+                }
+            }).catch(error => {
+            })
+
+            await clientGet(`mission_5a_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 2) {
+                        client.set(`mission_5a_answered_${interaction.user.id}`, true)
+                        let missionFiveA = false;
+                        if (answer === '4') {
+                            missionFiveA = true;
+                        }
+
+                        let missionFiveB = false;
+                        let missionFiveC = false;
+                        let missionFiveD = false;
+                        let missionFiveE = false;
+                        await clientGet(`mission_5b_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveB = true;
+                            }
+                        })
+                        await clientGet(`mission_5c_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveC = true;
+                            }
+                        })
+                        await clientGet(`mission_5d_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveD = true;
+                            }
+                        })
+                        await clientGet(`mission_5e_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveE = true;
+                            }
+                        })
+
+                        if (missionFiveB && missionFiveC && missionFiveD && missionFiveE) {
+                            client.set(`mission_5_answered_${interaction.user.id}`, true)
+
+                            if (missionFiveA) {
+                                await completeMission(api, interaction.user, '5');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 5 A has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1, Mission 2, Mission 3 and Mission 4, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                }
+                client.quit()
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 5 A`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
+            if (interaction) {
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
+            }
+        }
+    }
+
+    if (interaction.commandName === 'mission5b') {
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
+
+            let completed = false
+            let answered = false
+            await clientGet(`mission_5_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
+                }
+            }).catch(error => {
+            })
+
+            await clientGet(`mission_5b_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 2) {
+                        client.set(`mission_5b_answered_${interaction.user.id}`, true)
+                        let missionFiveB = false;
+                        if (answer === '14') {
+                            missionFiveB = true;
+                        }
+
+                        let missionFiveA = false;
+                        let missionFiveC = false;
+                        let missionFiveD = false;
+                        let missionFiveE = false;
+                        await clientGet(`mission_5a_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveA = true;
+                            }
+                        })
+                        await clientGet(`mission_5c_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveC = true;
+                            }
+                        })
+                        await clientGet(`mission_5d_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveD = true;
+                            }
+                        })
+                        await clientGet(`mission_5e_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveE = true;
+                            }
+                        })
+
+                        if (missionFiveA && missionFiveC && missionFiveD && missionFiveE) {
+                            client.set(`mission_5_answered_${interaction.user.id}`, true)
+
+                            if (missionFiveB) {
+                                await completeMission(api, interaction.user, '5');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 5 B has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1, Mission 2, Mission 3 and Mission 4, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                }
+                client.quit()
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 5 B`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
+            if (interaction) {
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
+            }
+        }
+    }
+
+    if (interaction.commandName === 'mission5c') {
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
+
+            let completed = false
+            let answered = false
+            await clientGet(`mission_5_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
+                }
+            }).catch(error => {
+            })
+
+            await clientGet(`mission_5c_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 2) {
+                        client.set(`mission_5c_answered_${interaction.user.id}`, true)
+                        let missionFiveC = false;
+                        if (answer === '4') {
+                            missionFiveC = true;
+                        }
+
+                        let missionFiveA = false;
+                        let missionFiveB = false;
+                        let missionFiveD = false;
+                        let missionFiveE = false;
+                        await clientGet(`mission_5a_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveA = true;
+                            }
+                        })
+                        await clientGet(`mission_5b_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveB = true;
+                            }
+                        })
+                        await clientGet(`mission_5d_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveD = true;
+                            }
+                        })
+                        await clientGet(`mission_5e_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveE = true;
+                            }
+                        })
+
+                        if (missionFiveA && missionFiveB && missionFiveD && missionFiveE) {
+                            client.set(`mission_5_answered_${interaction.user.id}`, true)
+
+                            if (missionFiveC) {
+                                await completeMission(api, interaction.user, '5');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**.`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 5 C has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1, Mission 2, Mission 3 and Mission 4, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                }
+                client.quit()
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 5 C`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
+            if (interaction) {
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
+            }
+        }
+    }
+
+    if (interaction.commandName === 'mission5d') {
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
+
+            let completed = false
+            let answered = false
+            await clientGet(`mission_5_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
+                }
+            }).catch(error => {
+            })
+
+            await clientGet(`mission_5d_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 2) {
+                        client.set(`mission_5d_answered_${interaction.user.id}`, true)
+                        let missionFiveD = false;
+                        if (answer === 'brawler') {
+                            missionFiveD = true;
+                        }
+
+                        let missionFiveA = false;
+                        let missionFiveB = false;
+                        let missionFiveC = false;
+                        let missionFiveE = false;
+                        await clientGet(`mission_5a_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveA = true;
+                            }
+                        })
+                        await clientGet(`mission_5b_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveB = true;
+                            }
+                        })
+                        await clientGet(`mission_5c_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveC = true;
+                            }
+                        })
+                        await clientGet(`mission_5e_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveE = true;
+                            }
+                        })
+
+                        if (missionFiveA && missionFiveB && missionFiveC && missionFiveE) {
+                            client.set(`mission_5_answered_${interaction.user.id}`, true)
+
+                            if (missionFiveD) {
+                                await completeMission(api, interaction.user, '5');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**.`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 5 D has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1, Mission 2, Mission 3 and Mission 4, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                }
+                client.quit()
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 5 D`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
+            if (interaction) {
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
+            }
+        }
+    }
+
+    if (interaction.commandName === 'mission5e') {
+        try {
+            const client = await getClient();
+            const clientGet = promisify(client.get).bind(redisClient);
+            await interaction.deferReply({ephemeral: true});
+            const answer = interaction.options.getString('answer');
+
+            let completed = false
+            let answered = false
+            await clientGet(`mission_5_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    completed = true
+                }
+            }).catch(error => {
+            })
+
+            await clientGet(`mission_5e_answered_${interaction.user.id}`).then(response => {
+                if (response) {
+                    answered = true
+                }
+            }).catch(error => {
+            })
+
+            if (!completed && !answered) {
+                await api.get('missions/last-completion', {
+                    params: {
+                        discord_id: interaction.user.id,
+                        username: interaction.user.username,
+                        discriminator: interaction.user.discriminator,
+                        avatar: interaction.user.avatar
+                    }
+                }).then(async response => {
+                    if (response.data.mission >= 2) {
+                        client.set(`mission_5e_answered_${interaction.user.id}`, true)
+                        let missionFiveE = false;
+                        if (answer === '3d') {
+                            missionFiveE = true;
+                        }
+
+                        let missionFiveA = false;
+                        let missionFiveB = false;
+                        let missionFiveC = false;
+                        let missionFiveD = false;
+                        await clientGet(`mission_5a_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveA = true;
+                            }
+                        })
+                        await clientGet(`mission_5b_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveB = true;
+                            }
+                        })
+                        await clientGet(`mission_5c_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveC = true;
+                            }
+                        })
+                        await clientGet(`mission_5d_answered_${interaction.user.id}`).then(response => {
+                            if (response) {
+                                missionFiveD = true;
+                            }
+                        })
+
+                        if (missionFiveA && missionFiveB && missionFiveC && missionFiveD) {
+                            client.set(`mission_5_answered_${interaction.user.id}`, true)
+
+                            if (missionFiveE) {
+                                await completeMission(api, interaction.user, '5');
+                            }
+
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**.`,
+                                    ephemeral: true
+                                })
+                            }
+                        } else {
+                            if (interaction) {
+                                await interaction.editReply({
+                                    content: `Your submission for Mission 5 E has been accepted.`,
+                                    ephemeral: true
+                                })
+                            }
+                        }
+                    } else {
+                        if (interaction) {
+                            await interaction.editReply({
+                                content: `You have to complete Mission 1, Mission 2, Mission 3 and Mission 4, before you can submit your answer.`,
+                                ephemeral: true
+                            })
+                        }
+                    }
+                    client.quit()
+                }).catch(async error => {
+                    if (interaction) {
+                        await interaction.editReply({
+                            content: `Something went wrong, please try again.`,
+                            ephemeral: true
+                        })
+                    }
+                    client.quit()
+                })
+            } else if (completed) {
+                if (interaction) {
+                    await interaction.editReply({content: `You have submitted your answer for Mission 5 A, B, C, D and E - If you haven't done so already, please connect your Solana Wallet using **/wallet**`, ephemeral: true})
+                }
+                client.quit()
+            } else {
+                if (interaction) {
+                    await interaction.editReply({content: `You have already submitted your answer for Mission 5 E`, ephemeral: true})
+                }
+                client.quit()
+            }
+        } catch (e) {
+            console.log(e)
+            if (interaction) {
+                await interaction.editReply({content: `Something went wrong, please try again.`, ephemeral: true})
+            }
+        }
+    }
 })
 
 client.on('messageCreate', async msg => {
@@ -773,10 +1383,12 @@ client.on('messageCreate', async msg => {
     if(msg.content.startsWith("!resetredis")) {
         await setupRedis()
 
-        redisClient.del('mission_4a_answered_135130716219375617')
-        redisClient.del('mission_4b_answered_135130716219375617')
-        redisClient.del('mission_4c_answered_135130716219375617')
-        redisClient.del('mission_4_answered_135130716219375617')
+        redisClient.del('mission_5a_answered_135130716219375617')
+        redisClient.del('mission_5b_answered_135130716219375617')
+        redisClient.del('mission_5c_answered_135130716219375617')
+        redisClient.del('mission_5d_answered_135130716219375617')
+        redisClient.del('mission_5e_answered_135130716219375617')
+        redisClient.del('mission_5_answered_135130716219375617')
         console.log("OK")
     }
 

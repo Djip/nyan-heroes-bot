@@ -30,7 +30,7 @@ async function callback(req, res) {
         redisClient.quit()
     } else if (!credentials.oauth_token || !oauth_verifier || !credentials.oauth_token_secret) {
         redisClient.quit()
-        return res.status(400).send('You denied the app or your session expired!');
+        res.status(400).send('You denied the app or your session expired!');
     } else {
         const twitterClient = new TwitterApi({
             appKey: process.env.TWITTER_API_KEY,
@@ -162,13 +162,6 @@ async function missionTwo(req, res) {
                             }).then(async tweetResponse => {
                                 let retweeted = false;
                                 let commented = false;
-                                // await tweetResponse.fetchNext(10).then(response => {
-                                //     console.log("Fetched more results")
-                                //     console.log(response)
-                                // }).catch(error => {
-                                //     console.log("Couldn't fetch more tweets")
-                                //     console.log(error)
-                                // })
 
                                 for (const tweet of tweetResponse.tweets) {
                                     if (tweet.referenced_tweets) {
@@ -198,6 +191,7 @@ async function missionTwo(req, res) {
                             }).catch(error => {
                                 console.log("Timeline error")
                                 console.log(error)
+                                res.send(`Something went wrong linking your Twitter account, please try again.`)
                             })
 
                             redisClient.quit()

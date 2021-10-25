@@ -21,7 +21,7 @@ client.on('ready', async interaction => {
 
     for (const user of users) {
         await guild.members.fetch(user).then(async fetchedUser => {
-            await fetchedUser.roles.add('898673122692182046').then(response => {
+            await fetchedUser.roles.add('898673127817625650').then(response => {
                 // console.log("Role added");
             }).catch(error => {
                 console.log(error)
